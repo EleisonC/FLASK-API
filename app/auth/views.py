@@ -41,8 +41,42 @@ class RegistrationView(MethodView):
             }
 
             return make_response(jsonify(response)), 202
+class LoginView(MethodView):
+    """This class-based view handles user login and access token generation. """
 
+    def post(self):
+        """Handle POST request for this view. Url --> /auth/login"""
+        try:
+            
+            user = User.query.filter_by(username=request.data['username']).first()
+
+            if user and user.password_is_valid(request.data['password']):
+                #generate the access token.
+                access_token = user.generate_token(user.id)
+                if access_token:
+                    response = {
+                        'message' : 'You logged in successfully',
+                        'access_token': access_token.encode().decode()
+                    }
+                    return make_response(jsonify(response)), 200
+            else:
+                #User does not exist. Hence an error message returnd
+                response={
+                    'message': 'Invalid username or password, please try again'
+
+                }
+                return make_response(jsonify(response)), 401
+        except Exception as e:
+            #Create a response containing a string error message 
+            response = {
+                'message': str(e)
+            }
+            #return a server error using the HTTP Error message
+            return make_response(jsonify(response)), 500
+
+#define the API resource
 registration_view = RegistrationView.as_view('register_view')
+login_view = LoginView.as_view('login_view')
 
 # Define the rule for the registration url --->  /auth/register
 # Then add the rule to the blueprint
@@ -51,3 +85,11 @@ auth_blueprint.add_url_rule(
     '/auth/register',
     view_func=registration_view,
     methods=['POST'])
+
+#define the rule for the registration url --> /auth/login
+#then add the rule to the blueprint
+auth_blueprint.add_url_rule(
+    '/auth/login',
+    view_func=login_view,
+    methods=['POST']
+)

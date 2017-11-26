@@ -3,13 +3,13 @@ from flask_sqlalchemy import SQLAlchemy
 #this is a local import 
 from instance.config import app_config
 
-POSTGRES = {
+"""POSTGRES = {
     'user': 'postgres',
     'pw': 'chrisenlarry',
     'db': 'yummys',
     'host': 'localhost',
     'port': '5432'
-}
+}"""
 #initialize sql-alchemy
 db = SQLAlchemy()
 
