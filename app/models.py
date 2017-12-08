@@ -65,7 +65,7 @@ def decode_token(token):
         return 'Invalid token. Please register or login'
 
 class Category(db.Model):
-    """This class represents the bucketlist table. """
+    """This class represents the category table. """
     __tablename__ = "category"
 
     id = db.Column(db.Integer, primary_key=True)
