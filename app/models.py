@@ -70,7 +70,6 @@ class Category(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     category_name = db.Column(db.String(255))
-    recipe_name = db.Column(db.String(50))
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(
         db.DateTime, default=db.func.current_timestamp(),
@@ -90,9 +89,10 @@ class Category(db.Model):
 
 
     @staticmethod
-    def get_all(user_id):
+    def get_all():
         """this method gets all the categories of foods for a given user."""
-        return Category.query.filter_by(created_by=user_id)
+        return Category.query.all()
+        #return Category.query.filter_by(created_by=user_id)
 
     def delete(self):
         db.session.delete(self)
