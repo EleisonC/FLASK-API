@@ -77,7 +77,7 @@ class Category(db.Model):
     created_by = db.Column(db.Integer, db.ForeignKey(User.id))
 
     def __init__(self,category_name):
-        """initialize with username and password"""
+        """initialize with category name"""
         self.category_name = category_name
         
 
@@ -99,4 +99,38 @@ class Category(db.Model):
         db.session.commit()
 
     def __repr__(self):
-        return "<User: {}>".format(self.name)
+        return "<Category: {}>".format(self.category_name)
+
+class Recipe(db.Model):
+    """this class represents the table of recipes"""
+    __tablename__ = "recipe"
+
+    id = db.Column(db.Integer, primary_key=True)
+    recipe_name = db.Column(db.String(255))
+    instructions = db.column(db.String())
+    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
+    date_modified = db.Column(
+        db.DateTime, default=db.func.current_timestamp(),
+        onupdate=db.func.current_timestamp())
+    category = db.Column(db.Integer, db.ForeignKey(Category.id))
+
+    def __init__(self,recipe_name):
+         """initialize with a recipe name"""
+         self.recipe_name = recipe_name
+
+    def save(self):
+        db.session.add(self)
+        db.commit()
+    
+    @staticmethod
+    def get_all():
+        """this method gets all the recipes of foods for a given category."""
+        return Recipe.query.all()
+        #return Recipe.query.filter_by(category=category_id)
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return "<Recipe: {}>".format(self.recipe_name)
