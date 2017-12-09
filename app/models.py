@@ -114,13 +114,14 @@ class Recipe(db.Model):
         onupdate=db.func.current_timestamp())
     category = db.Column(db.Integer, db.ForeignKey(Category.id))
 
-    def __init__(self,recipe_name):
+    def __init__(self,recipe_name, instructions):
          """initialize with a recipe name"""
          self.recipe_name = recipe_name
+         self.instructions = instructions
 
     def save(self):
         db.session.add(self)
-        db.commit()
+        db.session.commit()
     
     @staticmethod
     def get_all():
