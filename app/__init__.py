@@ -11,11 +11,12 @@ from flask import request, jsonify, abort
     'host': 'localhost',
     'port': '5432'
 }"""
-#initialize sql-alchemy
+# initialize sql-alchemy
+
 db = SQLAlchemy()
 
 def create_app(config_name):
-    from app.models import Category
+    from app.models import Category, Recipe
     app = FlaskAPI(__name__, instance_relative_config=True)
     app.config.from_object(app_config['development'])
     app.config.from_pyfile('config.py')
@@ -89,11 +90,27 @@ def create_app(config_name):
                 'id': category.id,
                 'category_name': category.category_name,
                 'date_created': category.date_created,
-                'data_modified': category.date_modified
+                'date_modified': category.date_modified
             })
             response.status_code = 200
             return response
-
+    
+    @app.route('/create_recipe/', methods=["POST"])
+    def create_recipe():
+        recipe_name = str(request.data.get('recipe_name'))  
+        instructions = str(request.data.get('instructions'))
+        if recipe_name and instructions:
+            recipe = Recipe(recipe_name=recipe_name, instructions=instructions)
+            recipe.save()
+            response= jsonify({
+                "id":recipe.id,
+                "recipe_name":recipe.recipe_name,
+                "instructions":recipe.instructions,
+                "date_created":recipe.date_created,
+                "date_modified":recipe.date_modified
+            })
+            response.status_code = 201
+            return response     
 
     from .auth import auth_blueprint
     app.register_blueprint(auth_blueprint)
