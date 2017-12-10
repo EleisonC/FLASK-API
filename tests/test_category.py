@@ -3,6 +3,7 @@ import os
 import json
 from app import create_app, db
 
+
 class CategorylistTestCase(unittest.TestCase):
     """This class represents the categorylist test case """
 
@@ -12,9 +13,9 @@ class CategorylistTestCase(unittest.TestCase):
         self.client = self.app.test_client()
         self.categorylist = {'category_name': 'Lunch'}
 
-        #binds the app to the current context
+        # binds the app to the current context
         with self.app.app_context():
-            # create all tables 
+            # create all tables
             db.create_all()
 
     def test_category_creation(self):
@@ -61,7 +62,7 @@ class CategorylistTestCase(unittest.TestCase):
         """Test API can delete an exsisting category. (DELETE request)."""
         rv = self.client.post(
             '/category_creation/',
-            data= {'category_name':'Dinner'}
+            data={'category_name': 'Dinner'}
         )
         self.assertEqual(rv.status_code, 201)
         res = self.client.delete('/category_manipulation/1')
