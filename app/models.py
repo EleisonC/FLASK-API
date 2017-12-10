@@ -107,7 +107,7 @@ class Recipe(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     recipe_name = db.Column(db.String(255))
-    instructions = db.column(db.String())
+    instructions = db.Column(db.String())
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(
         db.DateTime, default=db.func.current_timestamp(),
