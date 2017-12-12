@@ -91,6 +91,8 @@ ENV/
 env.bak/
 venv.bak/
 myenv/
+myenv/Scripts/
+myenv/Lib/
 
 # Spyder project settings
 .spyderproject
@@ -105,3 +107,9 @@ myenv/
 # mypy
 .mypy_cache/
 app/__pycache__/__init__.cpython-36.pyc
+app/__pycache__/__init__.cpython-36.pyc
+app/__pycache__/__init__.cpython-36.pyc
+app/__pycache__/models.cpython-36.pyc
+myenv/Lib/site-packages/__pycache__/six.cpython-36.pyc
+app/__pycache__/__init__.cpython-36.pyc
+myenv/Lib/site-packages/pkg_resources/_vendor/__pycache__/pyparsing.cpython-36.pyc
