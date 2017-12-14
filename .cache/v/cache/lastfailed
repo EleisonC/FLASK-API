@@ -1,5 +1,0 @@
-{
-  "tests/test_category.py": true,
-  "tests/test_recipe.py": true,
-  "tests/test_user.py": true
-}

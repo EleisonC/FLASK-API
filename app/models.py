@@ -1,8 +1,10 @@
-from app import db 
+from app import db
 import jwt
 from flask_bcrypt import Bcrypt
 from datetime import datetime, timedelta
 from flask import current_app
+
+
 class User(db.Model):
     """This class represents the bucketlist table. """
     __tablename__ = "users"
@@ -11,10 +13,10 @@ class User(db.Model):
     username = db.Column(db.String(255))
     password = db.Column(db.String())
     category = db.relationship(
-        'Category', order_by='Category.id', cascade ='all, delete-orphan'
+        'Category', order_by='Category.id', cascade='all, delete-orphan'
     )
 
-    def __init__(self,username, password):
+    def __init__(self, username, password):
         """initialize with username and password"""
         self.username = username
         self.password = Bcrypt().generate_password_hash(password).decode()
@@ -28,7 +30,6 @@ class User(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
-
 
     def generate_token(self, user_id):
         """ Generate the access token"""
@@ -48,21 +49,23 @@ class User(db.Model):
             )
             return jwt_string
         except Exception as e:
-            #return and error in string format if an exception occurs
+            # return and error in string format if an exception occurs
             return str(e)
-@staticmethod
-def decode_token(token):
-    """decode the token from the authorization header."""
-    try:
-        # try to decode the token using our secret variable
-        payload = jwt.decode(token, current_app.config.get('SECRET'))
-        return payload['sub']
-    except jwt.ExpiredSignatureError:
-        # the token is expired, return an error string 
-        return 'Expired token, Please login to get a new token'
-    except jwt.InvalidTokenError:
-        # the token is invalid, return an error string
-        return 'Invalid token. Please register or login'
+
+    @staticmethod
+    def decode_token(token):
+        """decode the token from the authorization header."""
+        try:
+            # try to decode the token using our secret variable
+            payload = jwt.decode(token, current_app.config.get('SECRET_KEY'))
+            return payload['sub']
+        except jwt.ExpiredSignatureError:
+            # the token is expired, return an error string
+            return 'Expired token, Please login to get a new token'
+        except jwt.InvalidTokenError:
+            # the token is invalid, return an error string
+            return 'Invalid token. Please register or login'
+
 
 class Category(db.Model):
     """This class represents the bucketlist table. """
@@ -75,24 +78,24 @@ class Category(db.Model):
         db.DateTime, default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp())
     created_by = db.Column(db.Integer, db.ForeignKey(User.id))
+    recipe = db.relationship(
+        'Recipe', order_by='Recipe.id', cascade='all, delete-orphan'
+    )
 
-    def __init__(self,category_name):
-        """initialize with category name"""
+    def __init__(self, category_name, created_by):
+        """initialize with category name and created by"""
         self.category_name = category_name
-        
+        self.created_by = created_by
 
     def save(self):
         db.session.add(self)
         db.session.commit()
 
-
-
-
     @staticmethod
-    def get_all():
+    def get_all(user_id):
         """this method gets all the categories of foods for a given user."""
-        return Category.query.all()
-        #return Category.query.filter_by(created_by=user_id)
+        # return Category.query.all()
+        return Category.query.filter_by(created_by=user_id)
 
     def delete(self):
         db.session.delete(self)
@@ -100,6 +103,7 @@ class Category(db.Model):
 
     def __repr__(self):
         return "<Category: {}>".format(self.category_name)
+
 
 class Recipe(db.Model):
     """this class represents the table of recipes"""
@@ -114,20 +118,21 @@ class Recipe(db.Model):
         onupdate=db.func.current_timestamp())
     category = db.Column(db.Integer, db.ForeignKey(Category.id))
 
-    def __init__(self,recipe_name, instructions):
-         """initialize with a recipe name"""
-         self.recipe_name = recipe_name
-         self.instructions = instructions
+    def __init__(self, recipe_name, instructions, category):
+        """initialize with a recipe name"""
+        self.recipe_name = recipe_name
+        self.instructions = instructions
+        self.category = category
 
     def save(self):
         db.session.add(self)
         db.session.commit()
-    
+
     @staticmethod
-    def get_all():
+    def get_all(category_id):
         """this method gets all the recipes of foods for a given category."""
-        return Recipe.query.all()
-        #return Recipe.query.filter_by(category=category_id)
+        # return Recipe.query.all()
+        return Recipe.query.filter_by(category=category_id)
 
     def delete(self):
         db.session.delete(self)

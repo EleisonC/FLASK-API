@@ -21,7 +21,7 @@ class UserTestCase(unittest.TestCase):
             db.session.close()
             db.drop_all()
             db.create_all()
-
+    
     def test_data_validation(self):
         """ test validity of user data."""
         userdata = {
