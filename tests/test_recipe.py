@@ -46,15 +46,16 @@ class RecipeTestCase(unittest.TestCase):
         category = self.client.post('/category_creation/',
                                     headers=dict(
                                         Authorization="Bearer " + access_token
-                                        ),
+                                    ),
                                     data=self.categorylist)
         category_id = json.loads(category.data.decode(
             'utf-8').replace("'", "\""))
 
-        res = self.client.post('/create_recipe/{}'.format(category_id['id']),
-                               headers=dict(
-                                   Authorization="Bearer " + access_token),
-                               data=self.recipes)
+        res = self.client.post('/create_recipe/{}'.format(
+            category_id['category_id']),
+            headers=dict(
+            Authorization="Bearer " + access_token),
+            data=self.recipes)
         self.assertEqual(res.status_code, 201)
         self.assertIn("fries", str(res.data))
 
@@ -64,14 +65,24 @@ class RecipeTestCase(unittest.TestCase):
         result = self.login_user()
         access_token = json.loads(result.data.decode())['access_token']
 
-        res = self.client.post('/create_recipe/',
-                               headers=dict(
-                                   Authorization="Bearer " + access_token),
-                               data=self.recipes)
+        category = self.client.post('/category_creation/',
+                                    headers=dict(
+                                        Authorization="Bearer " + access_token
+                                    ),
+                                    data=self.categorylist)
+        category_id = json.loads(category.data.decode(
+            'utf-8').replace("'", "\""))
+
+        res = self.client.post('/create_recipe/{}'.format(
+            category_id['category_id']),
+            headers=dict(
+            Authorization="Bearer " + access_token),
+            data=self.recipes)
         self.assertEqual(res.status_code, 201)
-        res = self.client.get('/view_all_recipes/',
-                              headers=dict(
-                                  Authorization="Bearer " + access_token))
+        res = self.client.get('/view_all_recipes/{}'.format(
+            category_id['category_id']),
+            headers=dict(
+            Authorization="Bearer " + access_token))
         self.assertEqual(res.status_code, 200)
         self.assertIn("fries", str(res.data))
 
@@ -81,14 +92,27 @@ class RecipeTestCase(unittest.TestCase):
         result = self.login_user()
         access_token = json.loads(result.data.decode())['access_token']
 
-        rv = self.client.post('/create_recipe/',
-                              headers=dict(
-                                  Authorization="Bearer " + access_token),
-                              data=self.recipes)
+        category = self.client.post('/category_creation/',
+                                    headers=dict(
+                                        Authorization="Bearer " + access_token
+                                    ),
+                                    data=self.categorylist)
+        category_id = json.loads(category.data.decode(
+            'utf-8').replace("'", "\""))
+
+        rv = self.client.post('/create_recipe/{}'.format(
+            category_id['category_id']),
+            headers=dict(
+            Authorization="Bearer " + access_token),
+            data=self.recipes)
+
         self.assertEqual(rv.status_code, 201)
+
         result_in_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
         result = self.client.get(
-            '/recipe_byid/{}'.format(result_in_json['id']),
+            '/recipe_byid/{}/{}'.format(category_id['category_id'],
+                                        result_in_json['recipe_id']
+                                        ),
             headers=dict(
                 Authorization="Bearer " + access_token))
         self.assertEqual(result.status_code, 200)
@@ -100,36 +124,63 @@ class RecipeTestCase(unittest.TestCase):
         result = self.login_user()
         access_token = json.loads(result.data.decode())['access_token']
 
-        rv = self.client.post('/create_recipe/', data={"recipe_name": "posho"})
+        category = self.client.post('/category_creation/',
+                                    headers=dict(
+                                        Authorization="Bearer " + access_token
+                                    ),
+                                    data={"category_name": "breakfast"})
+        category_id = json.loads(category.data.decode(
+            'utf-8').replace("'", "\""))
+
+        rv = self.client.post('/create_recipe/{}'.format(
+            category_id['category_id']),
+            headers=dict(
+            Authorization="Bearer " + access_token),
+            data={"recipe_name": "posho"})
         self.assertEqual(rv.status_code, 201)
-        rv = self.client.put('/recipe_manipulation/1',
-                             headers=dict(
-                                 Authorization="Bearer " + access_token),
-                             data={"recipe_name": "rice"})
+
+        rv = self.client.put('/recipe_manipulation/{}/1'.format(
+            category_id['category_id']),
+            headers=dict(
+            Authorization="Bearer " + access_token),
+            data={"recipe_name": "rice"})
         self.assertEqual(rv.status_code, 200)
-        results = self.client.get('/recipe_byid/1',
-                                  headers=dict(
-                                      Authorization="Bearer " + access_token))
+        results = self.client.get('/recipe_byid/{}/1'.format(
+            category_id['category_id']),
+            headers=dict(
+            Authorization="Bearer " + access_token))
         self.assertIn("rice", str(results.data))
 
     def test_recipe_delete(self):
         """ Test API can delete a recipe(DELETE request)"""
+
         self.register_user()
         result = self.login_user()
         access_token = json.loads(result.data.decode())['access_token']
 
-        rv = self.client.post('/create_recipe/',
-                              headers=dict(
-                                  Authorization="Bearer " + access_token),
-                              data={"recipe_name": "beans"})
+        category = self.client.post('/category_creation/',
+                                    headers=dict(
+                                        Authorization="Bearer " + access_token
+                                    ),
+                                    data={"category_name": "breakfast"})
+        category_id = json.loads(category.data.decode(
+            'utf-8').replace("'", "\""))
+
+        rv = self.client.post('/create_recipe/{}'.format(
+            category_id['category_id']),
+            headers=dict(
+            Authorization="Bearer " + access_token),
+            data={"recipe_name": "beans"})
         self.assertEqual(rv.status_code, 201)
-        rv = self.client.delete('/recipe_manipulation/1',
-                                headers=dict(
-                                    Authorization="Bearer " + access_token))
+        rv = self.client.delete('/recipe_manipulation/{}/1'.format(
+            category_id['category_id']),
+            headers=dict(
+            Authorization="Bearer " + access_token))
         self.assertEqual(rv.status_code, 200)
-        rv = self.client.get('/recipe_byid/1',
-                             headers=dict(
-                                 Authorization="Bearer " + access_token))
+        rv = self.client.get('/recipe_byid/{}/1'.format(
+            category_id['category_id']),
+            headers=dict(
+            Authorization="Bearer " + access_token))
         self.assertEqual(rv.status_code, 404)
 
     def tearDown(self):

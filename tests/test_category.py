@@ -77,7 +77,7 @@ class CategorylistTestCase(unittest.TestCase):
         self.assertEqual(rv.status_code, 201)
         result_in_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
         result = self.client.get(
-            '/category_manipulation/{}'.format(result_in_json['id']),
+            '/category_manipulation/{}'.format(result_in_json['category_id']),
             headers=dict(Authorization="Bearer " + access_token)
         )
         self.assertEqual(result.status_code, 200)
