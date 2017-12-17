@@ -13,7 +13,7 @@ class User(db.Model):
     username = db.Column(db.String(255))
     password = db.Column(db.String())
     category = db.relationship(
-        'Category', order_by='Category.id', cascade='all, delete-orphan'
+        'Category', order_by='Category.category_id', cascade='all, delete-orphan'
     )
 
     def __init__(self, username, password):
@@ -71,7 +71,7 @@ class Category(db.Model):
     """This class represents the bucketlist table. """
     __tablename__ = "category"
 
-    id = db.Column(db.Integer, primary_key=True)
+    category_id = db.Column(db.Integer, primary_key=True)
     category_name = db.Column(db.String(255))
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(
@@ -79,7 +79,7 @@ class Category(db.Model):
         onupdate=db.func.current_timestamp())
     created_by = db.Column(db.Integer, db.ForeignKey(User.id))
     recipe = db.relationship(
-        'Recipe', order_by='Recipe.id', cascade='all, delete-orphan'
+        'Recipe', order_by='Recipe.recipe_id', cascade='all, delete-orphan'
     )
 
     def __init__(self, category_name, created_by):
@@ -109,14 +109,14 @@ class Recipe(db.Model):
     """this class represents the table of recipes"""
     __tablename__ = "recipe"
 
-    id = db.Column(db.Integer, primary_key=True)
+    recipe_id = db.Column(db.Integer, primary_key=True)
     recipe_name = db.Column(db.String(255))
     instructions = db.Column(db.String())
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(
         db.DateTime, default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp())
-    category = db.Column(db.Integer, db.ForeignKey(Category.id))
+    category = db.Column(db.Integer, db.ForeignKey(Category.category_id))
 
     def __init__(self, recipe_name, instructions, category):
         """initialize with a recipe name"""
