@@ -21,7 +21,7 @@ class UserTestCase(unittest.TestCase):
             db.session.close()
             db.drop_all()
             db.create_all()
-    
+
     def test_data_validation(self):
         """ test validity of user data."""
         userdata = {
@@ -33,7 +33,7 @@ class UserTestCase(unittest.TestCase):
         result = json.loads(res.data.decode())
         # assert that the request contains a success
         self.assertEqual(result["message"],
-                         'Invalid username or password. Please try again.')
+                         'Invalid username or password not strong enough. Please try again.')
         self.assertEqual(res.status_code, 403)
 
     def test_registration(self):
@@ -91,3 +91,34 @@ class UserTestCase(unittest.TestCase):
         self.assertEqual(
             result['message'], 'Invalid username or password, please try again'
         )
+
+    def test_user_logout(self):
+        """ Test a user can logout"""
+        register_res = self.client.post('/auth/register', data=self.user_data)
+        self.assertEqual(register_res.status_code, 201)
+        login_user = self.client.post('/auth/login', data=self.user_data)
+        result = json.loads(login_user.data.decode())
+        access_token = result['access_token']
+        res = self.client.post('/auth/logout', headers=dict(
+            Authorization="Bearer " + access_token))
+        data = json.loads(res.data.decode())
+        self.assertTrue(data['message'] == 'Logged out Successfully')
+        self.assertEqual(res.status_code, 200)
+
+    def test_password_reset(self):
+        """ test a user can change password"""
+        register_res = self.client.post('/auth/register', data=self.user_data)
+        self.assertEqual(register_res.status_code, 201)
+        login_user = self.client.post('/auth/login', data=self.user_data)
+        result = json.loads(login_user.data.decode())
+        access_token = result['access_token']
+        res = self.client.put('/auth/reset_password', headers=dict(
+            Authorization="Bearer " + access_token), data={
+                'username': 'chris',
+                'password': 'Chris12',
+                'new_password': 'James23',
+                'confirm_password': 'James23'
+            })
+        data = json.loads(res.data.decode())
+        self.assertTrue(data['message'] == 'Password Succesfully Changed')
+        self.assertEqual(res.status_code, 200)

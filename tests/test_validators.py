@@ -3,7 +3,7 @@ This file contains testcases for the validator functions
 """
 
 import unittest
-from validator import validate_name, validate_password
+from validator import validate_name, validate_password, validate_password_reset
 
 
 class ValidatorTestCase(unittest.TestCase):
@@ -42,3 +42,8 @@ class ValidatorTestCase(unittest.TestCase):
         """ this test is for an invalid password"""
         result = validate_password("qwert")
         self.assertEqual(result, "not strong enough")
+
+    def test_validate_password_reset(self):
+        """ this test for password reset"""
+        result = validate_password_reset('James23', 'James23')
+        self.assertEqual(result, "Valid password")
