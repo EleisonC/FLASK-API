@@ -8,4 +8,4 @@ before_script:
 # command to run tests.py
 script: python -m pytest --cov=app
 after_success:
-  -coveralls
+  - coveralls
