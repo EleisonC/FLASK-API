@@ -31,3 +31,11 @@ def validate_password(password):
         if len(password) == len(validated_letter):
             return "Valid password"
     return "not strong enough"
+
+
+def validate_password_reset(new, confirm):
+    """ This is to confirm new passwords and validate."""
+    if new == confirm:
+        return validate_password(new)
+    else:
+        return 'Passwords dont match'
