@@ -40,7 +40,7 @@ def create_app(config_name):
                                         created_by=user_id)
                     category.save()
                     response = jsonify({
-                        'id': category.id,
+                        'category_id': category.category_id,
                         'category_name': category.category_name,
                         'date_created': category.date_created,
                         'data_modified': category.date_modified,
@@ -71,7 +71,7 @@ def create_app(config_name):
                 for category in categories:
 
                     obj = {
-                        'id': category.id,
+                        'category_id': category.category_id,
                         'category_name': category.category_name,
                         'date_created': category.date_created,
                         'data_modified': category.date_modified,
@@ -89,8 +89,9 @@ def create_app(config_name):
             }
             return jsonify(response), 401
 
-    @app.route('/category_manipulation/<int:id>', methods=["GET", "PUT", "DELETE"])
-    def category_manipulation(id, **kwargs):
+    @app.route('/category_manipulation/<int:category_id>',
+               methods=["GET", "PUT", "DELETE"])
+    def category_manipulation(category_id, **kwargs):
         # this is to retrieve a category using it's ID
         auth_header = request.headers.get('Authorization')
         access_token = auth_header.split(" ")[1]
@@ -99,7 +100,8 @@ def create_app(config_name):
 
             user_id = User.decode_token(access_token)
             if not isinstance(user_id, str):
-                category = Category.query.filter_by(id=id).first()
+                category = Category.query.filter_by(
+                    category_id=category_id).first()
                 if not category:
                     # raise a 404 status code if resource not found
                     abort(404)
@@ -107,7 +109,8 @@ def create_app(config_name):
                 if request.method == 'DELETE':
                     category.delete()
                     return {
-                        "message": "catergory {} deleted successfully".format(category.id)
+                        "message": "catergory {} deleted successfully".format(
+                            category.category_id)
                     }, 200
 
                 elif request.method == 'PUT':
@@ -115,7 +118,7 @@ def create_app(config_name):
                     category.category_name = name
                     category.save()
                     response = jsonify({
-                        'id': category.id,
+                        'category_id': category.category_id,
                         'category_name': category.category_name,
                         'date_created': category.date_created,
                         'data_modified': category.date_modified,
@@ -127,7 +130,7 @@ def create_app(config_name):
                 else:
                     # for the get method
                     response = jsonify({
-                        'id': category.id,
+                        'category_id': category.category_id,
                         'category_name': category.category_name,
                         'date_created': category.date_created,
                         'date_modified': category.date_modified,
@@ -142,8 +145,8 @@ def create_app(config_name):
             }
             return jsonify(response), 401
 
-    @app.route('/create_recipe/<int:id>', methods=["POST"])
-    def create_recipe(category_id):
+    @app.route('/create_recipe/<int:category_id>', methods=["POST"])
+    def create_recipe(category_id, **kwargs):
         """ method to create a recipe."""
         auth_header = request.headers.get('Authorization')
         access_token = auth_header.split(" ")[1]
@@ -160,7 +163,7 @@ def create_app(config_name):
                                     category=category_id)
                     recipe.save()
                     response = jsonify({
-                        "id": recipe.id,
+                        "recipe_id": recipe.recipe_id,
                         "recipe_name": recipe.recipe_name,
                         "instructions": recipe.instructions,
                         "date_created": recipe.date_created,
@@ -176,70 +179,116 @@ def create_app(config_name):
             }
             return jsonify(response), 401
 
-    @app.route('/view_all_recipes/', methods=["POST", "GET"])
-    def view_all_recipes():
-        recipes = Recipe.get_all()
-        print(recipes)
-        result = []
-        for recipe in recipes:
-            obj = {
-                "id": recipe.id,
-                "recipe_name": recipe.recipe_name,
-                "instructions": recipe.instructions,
-                "date_created": recipe.date_created,
-                "date_modified": recipe.date_modified,
-                "category": recipe.category
-            }
-            result.append(obj)
-        response = jsonify(result)
-        response.status_code = 200
-        return response
+    @app.route('/view_all_recipes/<int:category_id>', methods=["POST", "GET"])
+    def view_all_recipes(category_id, **kwags):
+        """ This method is used to call all recipes of a specific category."""
+        auth_header = request.headers.get('Authorization')
+        access_token = auth_header.split(" ")[1]
 
-    @app.route('/recipe_byid/<int:id>', methods=["GET", "POST"])
-    def recipe_byid(id, **kwargs):
-        # This is to retrieve a specific recipe by id
-        recipe = Recipe.query.filter_by(id=id).first()
-        if not recipe:
-            abort(404)
-        response = jsonify({
-            "id": recipe.id,
-            "recipe_name": recipe.recipe_name,
-            "instructions": recipe.instructions,
-            "date_created": recipe.date_created,
-            "date_modified": recipe.date_modified,
-            "category": recipe.category
-        })
-        response.status_code = 200
-        return response
+        if access_token:
 
-    @app.route('/recipe_manipulation/<int:id>', methods=["PUT", "DELETE"])
-    def recipe_manipulation(id, **kwargs):
-        recipe = Recipe.query.filter_by(id=id).first()
-        if not recipe:
-            abort(404)
+            user_id = User.decode_token(access_token)
+            if not isinstance(user_id, str):
 
-        if request.method == "PUT":
-            name = str(request.data.get('recipe_name', ''))
-            instructions = str(request.data.get('instructions', ''))
-            recipe.recipe_name = name
-            recipe.instructions = instructions
-            recipe.save()
-            response = jsonify({
-                "id": recipe.id,
-                "recipe_name": recipe.recipe_name,
-                "instructions": recipe.instructions,
-                "date_created": recipe.date_created,
-                "date_modified": recipe.date_modified,
-                "category": recipe.category
-            })
-            response.status_code = 200
-            return response
+                recipes = Recipe.get_all(category_id)
+                result = []
+                for recipe in recipes:
+                    obj = {
+                        "recipe_id": recipe.recipe_id,
+                        "recipe_name": recipe.recipe_name,
+                        "instructions": recipe.instructions,
+                        "date_created": recipe.date_created,
+                        "date_modified": recipe.date_modified,
+                        "category": recipe.category
+                    }
+                    result.append(obj)
+                response = jsonify(result)
+                response.status_code = 200
+                return response
         else:
-            # if the method is a DELETE request
-            recipe.delete()
-            return {
-                "message": "recipe {} deleted successfully".format(recipe.id)
-            }, 200
+            message = user_id
+            response = {
+                'message': message
+            }
+            return jsonify(response), 401
+
+    @app.route('/recipe_byid/<int:category_id>/<int:recipe_id>',
+               methods=["GET", "POST"])
+    def recipe_byid(category_id, recipe_id, **kwargs):
+        # This is to retrieve a specific recipe by id
+        auth_header = request.headers.get('Authorization')
+        access_token = auth_header.split(" ")[1]
+
+        if access_token:
+
+            user_id = User.decode_token(access_token)
+            if not isinstance(user_id, str):
+
+                recipe = Recipe.query.filter_by(recipe_id=recipe_id).first()
+                if not recipe:
+                    abort(404)
+                response = jsonify({
+                    "recipe_id": recipe.recipe_id,
+                    "recipe_name": recipe.recipe_name,
+                    "instructions": recipe.instructions,
+                    "date_created": recipe.date_created,
+                    "date_modified": recipe.date_modified,
+                    "category": recipe.category
+                })
+                response.status_code = 200
+                return response
+        else:
+            message = user_id
+            response = {
+                'message': message
+            }
+            return jsonify(response), 401
+
+    @app.route('/recipe_manipulation/<int:category_id>/<int:recipe_id>',
+               methods=["PUT", "DELETE"])
+    def recipe_manipulation(category_id, recipe_id, **kwargs):
+        """ This funtion is used to update a recipe or delete recipe"""
+        auth_header = request.headers.get('Authorization')
+        access_token = auth_header.split(" ")[1]
+
+        if access_token:
+
+            user_id = User.decode_token(access_token)
+            if not isinstance(user_id, str):
+
+                recipe = Recipe.query.filter_by(recipe_id=recipe_id).first()
+                if not recipe:
+                    abort(404)
+
+                if request.method == "PUT":
+                    name = str(request.data.get('recipe_name', ''))
+                    instructions = str(request.data.get('instructions', ''))
+                    recipe.recipe_name = name
+                    recipe.instructions = instructions
+                    recipe.save()
+                    response = jsonify({
+                        "recipe_id": recipe.recipe_id,
+                        "recipe_name": recipe.recipe_name,
+                        "instructions": recipe.instructions,
+                        "date_created": recipe.date_created,
+                        "date_modified": recipe.date_modified,
+                        "category": recipe.category
+                    })
+                    response.status_code = 200
+                    return response
+                else:
+                    # if the method is a DELETE request
+                    recipe.delete()
+                    return {
+                        "message": "recipe {} deleted successfully".format(
+                            recipe.recipe_id)
+                    }, 200
+        else:
+            message = user_id
+            response = {
+                'message': message
+            }
+            return jsonify(response), 401
 
     from .auth import auth_blueprint
     app.register_blueprint(auth_blueprint)
