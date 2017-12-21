@@ -207,7 +207,7 @@ def create_app(config_name):
             }
             return jsonify(response), 401
 
-    @app.route('/view_all_recipes/<int:category_id>', methods=["POST", "GET"])
+    @app.route('/view_all_recipes/<int:category_id>/', methods=["POST", "GET"])
     def view_all_recipes(category_id, **kwags):
         """ This method is used to call all recipes of a specific category."""
         auth_header = request.headers.get('Authorization')
