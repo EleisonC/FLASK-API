@@ -79,13 +79,64 @@ class RecipeTestCase(unittest.TestCase):
             Authorization="Bearer " + access_token),
             data=self.recipes)
         self.assertEqual(res.status_code, 201)
-        res = self.client.get('/view_all_recipes/{}'.format(
+        res = self.client.get('/view_all_recipes/{}/'.format(
             category_id['category_id']),
             headers=dict(
             Authorization="Bearer " + access_token))
         self.assertEqual(res.status_code, 200)
         self.assertIn("fries", str(res.data))
 
+    def test_view_by_query(self):
+        """ Test API can view all recipes(GET request)"""
+        self.register_user()
+        result = self.login_user()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        category = self.client.post('/category_creation/',
+                                    headers=dict(
+                                        Authorization="Bearer " + access_token
+                                    ),
+                                    data=self.categorylist)
+        category_id = json.loads(category.data.decode(
+            'utf-8').replace("'", "\""))
+
+        res = self.client.post('/create_recipe/{}'.format(
+            category_id['category_id']),
+                            headers=dict(
+                                Authorization="Bearer " + access_token),
+                                data=self.recipes)
+        res = self.client.get('/view_all_recipes/{}/?q=fries'.format(
+            category_id['category_id']),
+                              headers=dict(
+                                  Authorization="Bearer " + access_token))
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("fries", str(res.data))
+    def test_pagination_recipes(self):
+        """ test pagination in the get method"""
+        self.register_user()
+        result = self.login_user()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        category = self.client.post('/category_creation/',
+                                    headers=dict(
+                                        Authorization="Bearer " + access_token
+                                    ),
+                                    data=self.categorylist)
+        category_id = json.loads(category.data.decode(
+            'utf-8').replace("'", "\""))
+
+        res = self.client.post('/create_recipe/{}'.format(
+            category_id['category_id']),
+                            headers=dict(
+                                Authorization="Bearer " + access_token),
+                                data=self.recipes)
+        res = self.client.get('/view_all_recipes/{}/?page=1&per_page=5'.format(
+            category_id['category_id']),
+                              headers=dict(
+                                  Authorization="Bearer " + access_token))
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("fries", str(res.data))
+        
     def test_view_specific_recipe(self):
         """ Test API can view a specific recipe(GET request)"""
         self.register_user()
