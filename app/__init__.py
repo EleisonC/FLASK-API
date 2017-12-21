@@ -19,7 +19,7 @@ db = SQLAlchemy()
 def create_app(config_name):
     from app.models import Category, Recipe, User
     app = FlaskAPI(__name__, instance_relative_config=True)
-    app.config.from_object(app_config[config_name])
+    app.config.from_object(app_config["development"])
     app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     db.init_app(app)
@@ -48,12 +48,12 @@ def create_app(config_name):
                     })
                     response.status_code = 201
                     return response
-        else:
-            message = user_id
-            response = {
-                'message': message
-            }
-            return jsonify(response), 401
+            else:
+                message = user_id
+                response = {
+                    'message': message
+                }
+                return jsonify(response), 401
 
     @app.route('/category_view_all/', methods=["GET", "POST"])
     def fetch_category():
@@ -64,30 +64,58 @@ def create_app(config_name):
 
             user_id = User.decode_token(access_token)
             if not isinstance(user_id, str):
-                categories = Category.query.filter_by(created_by=user_id)
-
+                page = int(request.data.get('page', 1))
+                per_page = int(request.data.get('per_page', 5))
+                q = str(request.data.get('q', ''))
+                categories = Category.query.filter_by(
+                    created_by=user_id).paginate(page=page, per_page=per_page)
                 result = []
-
-                for category in categories:
-
-                    obj = {
-                        'category_id': category.category_id,
-                        'category_name': category.category_name,
-                        'date_created': category.date_created,
-                        'data_modified': category.date_modified,
-                        'created_by': user_id
-                    }
-                    result.append(obj)
-
-                response = jsonify(result)
-                response.status_code = 200
-                return response
-        else:
-            message = user_id
-            response = {
-                'message': message
-            }
-            return jsonify(response), 401
+                if q:
+                    for category in categories.items:
+                        if q in category.category_name:
+                            obj = {
+                                'category_id': category.category_id,
+                                'category_name': category.category_name,
+                                'date_created': category.date_created,
+                                'data_modified': category.date_modified,
+                                'created_by': user_id
+                            }
+                            response = jsonify(obj)
+                            response.status_code = 200
+                            return response
+                        else:
+                            responce = jsonify({
+                                'meassage': 'category not found'
+                            })
+                            responce.status_code = 404
+                            return responce
+                else:
+                    for category in categories.items:
+                        obj = {
+                            'category_id': category.category_id,
+                            'category_name': category.category_name,
+                            'date_created': category.date_created,
+                            'data_modified': category.date_modified,
+                            'created_by': user_id
+                        }
+                        result.append(obj)
+                        # return jsonify(result)
+                    if result:
+                        response = jsonify(result)
+                        response.status_code = 200
+                        return response
+                    else:
+                        response = jsonify({
+                            'message': 'no categories available'
+                        })
+                        response.status_code = 404
+                        return response
+            else:
+                message = user_id
+                response = {
+                    'message': message
+                }
+                return jsonify(response), 401
 
     @app.route('/category_manipulation/<int:category_id>',
                methods=["GET", "PUT", "DELETE"])
@@ -138,12 +166,12 @@ def create_app(config_name):
                     })
                     response.status_code = 200
                     return response
-        else:
-            message = user_id
-            response = {
-                'message': message
-            }
-            return jsonify(response), 401
+            else:
+                message = user_id
+                response = {
+                    'message': message
+                }
+                return jsonify(response), 401
 
     @app.route('/create_recipe/<int:category_id>', methods=["POST"])
     def create_recipe(category_id, **kwargs):
@@ -179,7 +207,7 @@ def create_app(config_name):
             }
             return jsonify(response), 401
 
-    @app.route('/view_all_recipes/<int:category_id>', methods=["POST", "GET"])
+    @app.route('/view_all_recipes/<int:category_id>/', methods=["POST", "GET"])
     def view_all_recipes(category_id, **kwags):
         """ This method is used to call all recipes of a specific category."""
         auth_header = request.headers.get('Authorization')
@@ -189,28 +217,60 @@ def create_app(config_name):
 
             user_id = User.decode_token(access_token)
             if not isinstance(user_id, str):
-
-                recipes = Recipe.get_all(category_id)
+                page = int(request.data.get('page', 1))
+                per_page = int(request.data.get('per_page', 5))
+                q = str(request.data.get('q', ''))
+                recipes = Recipe.query.filter_by(
+                    category=category_id).paginate(page=page, per_page=per_page)
                 result = []
-                for recipe in recipes:
-                    obj = {
-                        "recipe_id": recipe.recipe_id,
-                        "recipe_name": recipe.recipe_name,
-                        "instructions": recipe.instructions,
-                        "date_created": recipe.date_created,
-                        "date_modified": recipe.date_modified,
-                        "category": recipe.category
-                    }
-                    result.append(obj)
-                response = jsonify(result)
-                response.status_code = 200
-                return response
-        else:
-            message = user_id
-            response = {
-                'message': message
-            }
-            return jsonify(response), 401
+                if q:
+                    for recipe in recipes.items:
+                        if q in recipe.recipe_name:
+                            obj = {
+                                "recipe_id": recipe.recipe_id,
+                                "recipe_name": recipe.recipe_name,
+                                "instructions": recipe.instructions,
+                                "date_created": recipe.date_created,
+                                "date_modified": recipe.date_modified,
+                                "category": recipe.category
+                            }
+                            result.append(obj)
+                            response = jsonify(result)
+                            response.status_code = 200
+                            return response
+                        else:
+                            response = jsonify({
+                                'meassage': 'category not found'
+                            })
+                            response.status_code = 401
+                            return response
+                else:
+                    for recipe in recipes.items:
+                        obj = {
+                            "recipe_id": recipe.recipe_id,
+                            "recipe_name": recipe.recipe_name,
+                            "instructions": recipe.instructions,
+                            "date_created": recipe.date_created,
+                            "date_modified": recipe.date_modified,
+                            "category": recipe.category
+                        }
+                        result.append(obj)
+                    if result:
+                        response = jsonify(result)
+                        response.status_code = 200
+                        return response
+                    else:
+                        response = jsonify({
+                            'message': 'no recipes available'
+                        })
+                        response.status_code = 404
+                        return response
+            else:
+                message = user_id
+                response = {
+                    'message': message
+                }
+                return jsonify(response), 401
 
     @app.route('/recipe_byid/<int:category_id>/<int:recipe_id>',
                methods=["GET", "POST"])

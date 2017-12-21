@@ -83,6 +83,39 @@ class CategorylistTestCase(unittest.TestCase):
         self.assertEqual(result.status_code, 200)
         self.assertIn('Lunch', str(result.data))
 
+    def test_pagination(self):
+        """ test pagination"""
+        self.register_user()
+        result = self.login_user()
+        access_token = json.loads(result.data.decode())['access_token']
+        rv = self.client.post('/category_creation/',
+                              headers=dict(
+                                  Authorization="Bearer " + access_token),
+                              data=self.categorylist)
+        result = self.client.get(
+            '/category_view_all/?page=1&per_page=5',
+            headers=dict(Authorization="Bearer " + access_token)
+        )
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('Lunch', str(result.data))
+
+    def test_get_category_by_query(self):
+        """ Test API can get categories by query"""
+        self.register_user()
+        result = self.login_user()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        rv = self.client.post('/category_creation/',
+                              headers=dict(
+                                  Authorization="Bearer " + access_token),
+                              data=self.categorylist)
+        result = self.client.get(
+            '/category_view_all/?q=Lunch',
+            headers=dict(Authorization="Bearer " + access_token)
+        )
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('Lunch', str(result.data))
+
     def test_category_can_be_edited(self):
         """Test API can edit an existing category. (Put request)"""
         self.register_user()
