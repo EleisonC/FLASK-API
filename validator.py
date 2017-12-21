@@ -8,15 +8,8 @@ def validate_name(name):
     """This method is used to validate the username
     check if its fully string or string with numbers """
     name = str(name)
-    validated_letter = []
-    for n, letter in enumerate(name):
-        letter = str(letter)
-        if re.match(r'[A-Za-z]', letter) or\
-                re.match(r'[A-Za-z0-9]', letter):
-            validated_letter.append(letter)
-    if len(name) == len(validated_letter):
+    if re.match(r'(?=.*[A-Za-z])^[A-Za-z0-9]*$', name):
         return 'Valid Name'
-    return validated_letter
 
 
 def validate_password(password):
