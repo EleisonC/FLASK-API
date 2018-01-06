@@ -25,6 +25,11 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+migrations/
+__pycache__/
+__pycache__1/
+.cache/
+.vscode/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -93,6 +98,8 @@ venv.bak/
 myenv/
 myenv/Scripts/
 myenv/Lib/
+
+*.pyc*
 
 # Spyder project settings
 .spyderproject
