@@ -46,6 +46,35 @@ class CategorylistTestCase(unittest.TestCase):
                                data=self.categorylist)
         self.assertEqual(res.status_code, 201)
         self.assertIn('Lunch', str(res.data))
+    def test_category_created_twice(self):
+        self.register_user()
+        result = self.login_user()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        res = self.client.post('/category_creation/',
+                               headers=dict(
+                                   Authorization="Bearer " + access_token),
+                               data=self.categorylist)
+        res_2 = self.client.post('/category_creation/',
+                               headers=dict(
+                                   Authorization="Bearer " + access_token),
+                               data=self.categorylist)
+        result = json.loads(res_2.data.decode())
+        self.assertEqual(result['message'],
+                         'The name already exists. Try another')
+    def test_category_valid_name(self):
+        """ Test api cant accept invalid data"""
+        self.register_user()
+        result = self.login_user()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        res_1 = self.client.post('/category_creation/',
+                               headers=dict(
+                                   Authorization="Bearer " + access_token),
+                               data={'category_name': '  '})
+        result = json.loads(res_1.data.decode())
+        self.assertEqual(result['message'],
+                         'Enter valid data')
 
     def test_api_can_get_all_categories(self):
         """Test API can get a category (Get request)"""
@@ -82,6 +111,18 @@ class CategorylistTestCase(unittest.TestCase):
         )
         self.assertEqual(result.status_code, 200)
         self.assertIn('Lunch', str(result.data))
+    
+    def test_get_empty_category_by_id(self):
+        """Test API can get a single category by using """
+        self.register_user()
+        result = self.login_user()
+        access_token = json.loads(result.data.decode())['access_token']
+        result = self.client.get(
+            '/category_manipulation/3',
+            headers=dict(Authorization="Bearer " + access_token)
+        )
+        data = json.loads(result.data.decode())
+        self.assertTrue(data['message'] == 'Invalid request')
 
     def test_pagination(self):
         """ test pagination"""
@@ -138,6 +179,19 @@ class CategorylistTestCase(unittest.TestCase):
                                   headers=dict(
                                       Authorization="Bearer " + access_token))
         self.assertIn('Soups', str(results.data))
+    
+    def test_empty_category_edit(self):
+        """Test API can edit an existing category. (Put request)"""
+        self.register_user()
+        result = self.login_user()
+        access_token = json.loads(result.data.decode())['access_token']
+        rv = self.client.put(
+            '/category_manipulation/4',
+            headers=dict(Authorization="Bearer " + access_token),
+            data={'category_name': 'Soups'}
+        )
+        data = json.loads(rv.data.decode())
+        self.assertTrue(data['message'] == 'Invalid request')
 
     def test_categorylist_deletion(self):
         """Test API can delete an exsisting category. (DELETE request)."""
@@ -158,7 +212,19 @@ class CategorylistTestCase(unittest.TestCase):
         result = self.client.get('/category_manipulation/1',
                                  headers=dict(
                                      Authorization="Bearer " + access_token))
-        self.assertEqual(result.status_code, 404)
+        self.assertEqual(result.status_code, 200)
+    
+    def test_empty_categorylist_deletion(self):
+        """Test API can delete a non exsisting category with id 3. (DELETE request)."""
+        self.register_user()
+        result = self.login_user()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        result = self.client.get('/category_manipulation/3',
+                                 headers=dict(
+                                     Authorization="Bearer " + access_token))
+        data = json.loads(result.data.decode())
+        self.assertTrue(data['message'] == 'Invalid request')
 
     def tearDown(self):
         """teardown all initalized variables."""

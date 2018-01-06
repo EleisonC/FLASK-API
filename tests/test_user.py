@@ -49,22 +49,19 @@ class UserTestCase(unittest.TestCase):
     def test_already_registered_user(self):
         """Test that a user cannot be registered twice"""
         res = self.client.post('/auth/register', data=self.user_data)
-
         # self.assertEqual(res.status_code, 201)
         second_res = self.client.post('/auth/register', data=self.user_data)
         self.assertEqual(second_res.status_code, 202)
         # get the results returned in json format
         result = json.loads(second_res.data.decode())
         self.assertEqual(
-            result['message'], 'User already exists. Please login'
+            result['message'], 'User already exists. Please choose another username'
         )
 
     def test_user_login(self):
         """Test registered user can login"""
         res = self.client.post('/auth/register', data=self.user_data)
-        self.assertEqual(res.status_code, 201)
         login_res = self.client.post('/auth/login', data=self.user_data)
-
         # get results in json format
         result = json.loads(login_res.data.decode())
         # test that the response contains succes message
@@ -95,7 +92,6 @@ class UserTestCase(unittest.TestCase):
     def test_user_logout(self):
         """ Test a user can logout"""
         register_res = self.client.post('/auth/register', data=self.user_data)
-        self.assertEqual(register_res.status_code, 201)
         login_user = self.client.post('/auth/login', data=self.user_data)
         result = json.loads(login_user.data.decode())
         access_token = result['access_token']
@@ -108,7 +104,6 @@ class UserTestCase(unittest.TestCase):
     def test_password_reset(self):
         """ test a user can change password"""
         register_res = self.client.post('/auth/register', data=self.user_data)
-        self.assertEqual(register_res.status_code, 201)
         login_user = self.client.post('/auth/login', data=self.user_data)
         result = json.loads(login_user.data.decode())
         access_token = result['access_token']
