@@ -6,7 +6,7 @@ from flask import current_app
 
 
 class User(db.Model):
-    """This class represents the bucketlist table. """
+    """This class represents the user table. """
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
