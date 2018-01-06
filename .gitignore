@@ -2,7 +2,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-*-36.pyc
 
 # C extensions
 *.so
@@ -94,6 +93,7 @@ myenv/
 myenv/Scripts/
 myenv/Lib/
 
+
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -106,11 +106,4 @@ myenv/Lib/
 
 # mypy
 .mypy_cache/
-app/__pycache__/__init__.cpython-36.pyc
-app/__pycache__/__init__.cpython-36.pyc
-app/__pycache__/__init__.cpython-36.pyc
-app/__pycache__/models.cpython-36.pyc
-myenv/Lib/site-packages/__pycache__/six.cpython-36.pyc
-app/__pycache__/__init__.cpython-36.pyc
-myenv/Lib/site-packages/pkg_resources/_vendor/__pycache__/pyparsing.cpython-36.pyc
-myenv/pip-selfcheck.json
+

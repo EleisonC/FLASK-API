@@ -102,7 +102,7 @@ class Logout(MethodView):
                 user = User.query.filter_by(id=user_id).first()
 
                 if user:
-                    user.tokken = ''
+                    user.token = ''
                     user.save()
 
                 response = {
