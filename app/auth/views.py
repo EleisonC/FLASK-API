@@ -3,7 +3,7 @@ import validator
 from flask.views import MethodView
 from flask import make_response, request, jsonify
 from app.models import User, BlacklistedToken
-
+from flask_bcrypt import Bcrypt
 
 class RegistrationView(MethodView):
     """This class registers a new user. """
@@ -266,29 +266,28 @@ class ResetPassword(MethodView):
                 user = User.query.filter_by(
                     username=username).first()
 
-                if not user and not user.password_is_valid(password):
-                    responce = jsonify({
-                        'message': 'User not found or inccorect password'
-                    })
-                    return make_response(responce), 404
-                if not all(reset_data):
-                    responce = jsonify({
+                if user and user.password_is_valid(password):
+                    if not all(reset_data):
+                        responce = jsonify({
                         'message': 'Invalid data. Please try again.'
-                    })
-                    return make_response(responce)
-                else:
-                    if validator.validate_password_reset(
-                            new, confirm) == "Valid password":
-                        user.password = new
-                        user.save()
-                        response = {
-                            'message': 'Password Succesfully Changed'}
-                        return make_response(jsonify(response)), 200
+                        })
+                        return make_response(responce)
                     else:
-                        response = {
-                            'message': "Passwords don't match or not strong"
-                        }
-                        return make_response(jsonify(response))
+                        if validator.validate_password_reset(
+                                new, confirm) == "Valid password":
+                            user.password = Bcrypt().generate_password_hash(new).decode()
+                            user.save()
+                            response = {
+                                'message': 'Password Succesfully Changed'}
+                            return make_response(jsonify(response)), 200
+                        else:
+                            response = {
+                                'message': "Passwords don't match or not strong"
+                            }
+                            return make_response(jsonify(response))
+                else:
+                    return jsonify({'message': 'Wrong username or password'})
+                
 
 
 # define the API resource
