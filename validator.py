@@ -8,7 +8,7 @@ def validate_name(name):
     """This method is used to validate the username
     check if its fully string or string with numbers """
     name = str(name)
-    if re.match(r'(?=.*[A-Za-z])^[A-Za-z0-9]*$', name):
+    if re.match(r'(?=.*[A-Za-z\s])^[A-Za-z0-9\s]*$', name):
         return 'Valid Name'
 
 
