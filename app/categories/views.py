@@ -49,6 +49,8 @@ def create_category():
 
     """
     auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return jsonify({'message': 'Provide a token'})
     access_token = auth_header.split(" ")[1]
 
     if access_token:
@@ -142,6 +144,8 @@ def fetch_category():
 
     """
     auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return jsonify({'message': 'Provide a token'})
     access_token = auth_header.split(" ")[1]
 
     if access_token:
@@ -224,6 +228,8 @@ def category_delete(category_id, **kwargs):
             description:  category successfully deleted
     """
     auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return jsonify({'message': 'Provide a token'})
     access_token = auth_header.split(" ")[1]
 
     if access_token:
@@ -266,6 +272,8 @@ def category_manipulation(category_id, **kwargs):
             description:  category successfully created
     """
     auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return jsonify({'message': 'Provide a token'})
     access_token = auth_header.split(" ")[1]
 
     if access_token:
@@ -319,8 +327,9 @@ def category_view(category_id, **kwargs):
             description:  category successfully created
     """
     auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return jsonify({'message': 'Provide a token'})
     access_token = auth_header.split(" ")[1]
-
     if access_token:
 
         user_id = User.decode_token(access_token)
