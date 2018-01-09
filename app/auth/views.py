@@ -56,11 +56,12 @@ class RegistrationView(MethodView):
           403:
             description: invalid username or password not strong enough
         """
-
-        user = User.query.filter_by(username=request.data['username']).first()
-        if not user:
+        # user = User.query.filter_by(username=request.data['username']).first()
+        # if not user:
             # we will try to register them
-            try:
+        try:
+            user = User.query.filter_by(username=request.data['username']).first()
+            if not user:
                 post_data = request.data
                 # register the user
                 username = post_data['username'].strip()
@@ -81,20 +82,28 @@ class RegistrationView(MethodView):
                             'message': 'Invalid username or password not strong enough. Please try again.'
                         }
                         return make_response(jsonify(response)), 403
-            except Exception as e:
-                # An error occured, therefore return a string message containg the error
+            else:
+                # there is an existing user. we dont want to register twice
+                # return a message to the user telling them that they already exist
                 response = {
-                    'message': str(e)
+                    'message': 'User already exists. Please choose another username'
                 }
-                return make_response(jsonify(response)), 401
-        else:
-            # there is an existing user. we dont want to register twice
-            # return a message to the user telling them that they already exist
-            response = {
-                'message': 'User already exists. Please choose another username'
-            }
 
-            return make_response(jsonify(response)), 202
+                return make_response(jsonify(response)), 202
+        except Exception as e:
+            # An error occured, therefore return a string message containg the error
+            response = {
+                'message': "provide a username and password in json form"
+            }
+            return make_response(jsonify(response)), 401
+        # else:
+        #     # there is an existing user. we dont want to register twice
+        #     # return a message to the user telling them that they already exist
+        #     response = {
+        #         'message': 'User already exists. Please choose another username'
+        #     }
+
+        #     return make_response(jsonify(response)), 202
 
 
 class LoginView(MethodView):
@@ -147,7 +156,6 @@ class LoginView(MethodView):
             description: An error occured ensure proper login
         """
         try:
-
             user = User.query.filter_by(
                 username=request.data['username']).first()
 
@@ -171,7 +179,7 @@ class LoginView(MethodView):
         except Exception as e:
             # Create a response containing a string error message
             response = {
-                'message': str(e)
+                'message': "Provide both username and password"
             }
             # return a server error using the HTTP Error message
             return make_response(jsonify(response)), 500
@@ -193,6 +201,8 @@ class Logout(MethodView):
             description: you logged out successfully
         """
         auth_header = request.headers.get("Authorization")
+        if not auth_header:
+            return jsonify({'message': 'Provide a token'})
         access_token = auth_header.split(" ")[1]
 
         if access_token:
@@ -251,6 +261,8 @@ class ResetPassword(MethodView):
 
         """
         auth_header = request.headers.get("Authorization")
+        if not auth_header:
+            return jsonify({'message': 'Provide a token'})
         access_token = auth_header.split(" ")[1]
 
         if access_token:

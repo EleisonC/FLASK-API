@@ -54,6 +54,8 @@ def create_recipe(category_id, **kwargs):
 
     """
     auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return jsonify({'message': 'Provide a token'})
     access_token = auth_header.split(" ")[1]
 
     if access_token:
@@ -147,6 +149,8 @@ def view_all_recipes(category_id, **kwags):
 
     """
     auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return jsonify({'message': 'Provide a token'})
     access_token = auth_header.split(" ")[1]
 
     if access_token:
@@ -254,6 +258,8 @@ def recipe_byid(category_id, recipe_id, **kwargs):
 
     """
     auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return jsonify({'message': 'Provide a token'})
     access_token = auth_header.split(" ")[1]
 
     if access_token:
@@ -314,6 +320,8 @@ def recipe_manipulation(category_id, recipe_id, **kwargs):
             description:  recipe successfully updated
     """
     auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return jsonify({'message': 'Provide a token'})
     access_token = auth_header.split(" ")[1]
 
     if access_token:
@@ -383,6 +391,8 @@ def recipe_delete(category_id, recipe_id):
             description:  category successfully deleted
     """
     auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return jsonify({'message': 'Provide a token'})
     access_token = auth_header.split(" ")[1]
 
     if access_token:

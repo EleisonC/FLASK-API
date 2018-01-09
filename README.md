@@ -27,7 +27,11 @@ $ python manage.py db upgrade
 
 4. Run the application
 ```
-$ python run.py
+$ python run.py 
+```
+5. Run the application tests
+```
+$ python manage.py test
 ```
 
 #### Features
