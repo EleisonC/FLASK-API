@@ -10,14 +10,16 @@ class User(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(255), unique=True)
     username = db.Column(db.String(255))
     password = db.Column(db.String())
     category = db.relationship(
         'Category', order_by='Category.category_id', cascade='all, delete-orphan'
     )
 
-    def __init__(self, username, password):
+    def __init__(self, username, password, email):
         """initialize with username and password"""
+        self.email = email
         self.username = username
         self.password = Bcrypt().generate_password_hash(password).decode()
 
@@ -37,7 +39,7 @@ class User(db.Model):
         try:
             # set up a payload with an expiration time
             payload = {
-                'exp': datetime.utcnow() + timedelta(minutes=5),
+                'exp': datetime.utcnow() + timedelta(minutes=100),
                 'iat': datetime.utcnow(),
                 'sub': user_id
             }
