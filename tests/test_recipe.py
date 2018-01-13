@@ -21,9 +21,10 @@ class RecipeTestCase(unittest.TestCase):
             # create all tables
             db.create_all()
 
-    def register_user(self, username="Chris", password="Chris32"):
+    def register_user(self, email='chris@gog.com', username="Chris", password="Chris32"):
         """This helper method helps register a test user."""
         user_data = {
+            'email': email,
             'username': username,
             'password': password
         }
@@ -79,7 +80,7 @@ class RecipeTestCase(unittest.TestCase):
             Authorization="Bearer " + access_token),
             data=self.recipes)
         self.assertEqual(res.status_code, 201)
-        res = self.client.get('/view_all_recipes/{}/'.format(
+        res = self.client.get('/view_recipes/{}/'.format(
             category_id['category_id']),
             headers=dict(
             Authorization="Bearer " + access_token))
@@ -105,7 +106,7 @@ class RecipeTestCase(unittest.TestCase):
                             headers=dict(
                                 Authorization="Bearer " + access_token),
                                 data=self.recipes)
-        res = self.client.get('/view_all_recipes/{}/?q=fries'.format(
+        res = self.client.get('/view_recipes/{}/?q=fries'.format(
             category_id['category_id']),
                               headers=dict(
                                   Authorization="Bearer " + access_token))
@@ -130,7 +131,7 @@ class RecipeTestCase(unittest.TestCase):
                             headers=dict(
                                 Authorization="Bearer " + access_token),
                                 data=self.recipes)
-        res = self.client.get('/view_all_recipes/{}/?page=1&per_page=5'.format(
+        res = self.client.get('/view_recipes/{}/?page=1&per_page=5'.format(
             category_id['category_id']),
                               headers=dict(
                                   Authorization="Bearer " + access_token))
@@ -189,7 +190,7 @@ class RecipeTestCase(unittest.TestCase):
                                 Authorization="Bearer " + access_token),
                                 data={"recipe_name": "posho"})
         self.assertEqual(rv_1.status_code, 201)
-        rv_2 = self.client.put('/recipe_manipulation/{}/1'.format(
+        rv_2 = self.client.put('/recipe_edit/{}/1'.format(
             category_id['category_id']),
             headers=dict(
             Authorization="Bearer " + access_token),
@@ -268,7 +269,7 @@ class RecipeTestCase(unittest.TestCase):
             Authorization="Bearer " + access_token),
             data={"recipe_name": "beans"})
         self.assertEqual(rv.status_code, 201)
-        rv = self.client.delete('/recipe_manipulation/{}/1'.format(
+        rv = self.client.delete('/recipe_delete/{}/1'.format(
             category_id['category_id']),
             headers=dict(
             Authorization="Bearer " + access_token))

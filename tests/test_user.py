@@ -12,6 +12,7 @@ class UserTestCase(unittest.TestCase):
         self.app = create_app(config_name="testing")
         self.client = self.app.test_client()
         self.user_data = {
+            'email': 'chris@gog.com',
             'username': 'chris',
             'password': 'Chris12'
         }
@@ -25,6 +26,7 @@ class UserTestCase(unittest.TestCase):
     def test_data_validation(self):
         """ test validity of user data."""
         userdata = {
+            "email": "james@gog.com",
             "username": "james",
             "password": "chris"
         }

@@ -18,9 +18,10 @@ class CategorylistTestCase(unittest.TestCase):
             # create all tables
             db.create_all()
 
-    def register_user(self, username="Chris", password="Chris32"):
+    def register_user(self, email='chris@gog.com', username="Chris", password="Chris32"):
         """This helper method helps register a test user."""
         user_data = {
+            'email': email,
             'username': username,
             'password': password
         }
@@ -71,7 +72,7 @@ class CategorylistTestCase(unittest.TestCase):
         res_1 = self.client.post('/category_creation/',
                                headers=dict(
                                    Authorization="Bearer " + access_token),
-                               data={'category_name': '  '})
+                                data={'category_name': '  '})
         result = json.loads(res_1.data.decode())
         self.assertEqual(result['message'],
                          'Enter valid data')
@@ -87,7 +88,7 @@ class CategorylistTestCase(unittest.TestCase):
                                    Authorization="Bearer " + access_token),
                                data=self.categorylist)
         self.assertEqual(res.status_code, 201)
-        res = self.client.get('/category_view_all/',
+        res = self.client.get('/category_view/',
                               headers=dict(
                                   Authorization="Bearer " + access_token))
         self.assertEqual(res.status_code, 200)
@@ -106,7 +107,7 @@ class CategorylistTestCase(unittest.TestCase):
         self.assertEqual(rv.status_code, 201)
         result_in_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
         result = self.client.get(
-            '/category_manipulation/{}'.format(result_in_json['category_id']),
+            '/category_byID/{}'.format(result_in_json['category_id']),
             headers=dict(Authorization="Bearer " + access_token)
         )
         self.assertEqual(result.status_code, 200)
@@ -118,7 +119,7 @@ class CategorylistTestCase(unittest.TestCase):
         result = self.login_user()
         access_token = json.loads(result.data.decode())['access_token']
         result = self.client.get(
-            '/category_manipulation/3',
+            '/category_byID/3',
             headers=dict(Authorization="Bearer " + access_token)
         )
         data = json.loads(result.data.decode())
@@ -134,7 +135,7 @@ class CategorylistTestCase(unittest.TestCase):
                                   Authorization="Bearer " + access_token),
                               data=self.categorylist)
         result = self.client.get(
-            '/category_view_all/?page=1&per_page=5',
+            '/category_view/?page=1&per_page=5',
             headers=dict(Authorization="Bearer " + access_token)
         )
         self.assertEqual(result.status_code, 200)
@@ -151,7 +152,7 @@ class CategorylistTestCase(unittest.TestCase):
                                   Authorization="Bearer " + access_token),
                               data=self.categorylist)
         result = self.client.get(
-            '/category_view_all/?q=Lunch',
+            '/category_view/?q=Lunch',
             headers=dict(Authorization="Bearer " + access_token)
         )
         self.assertEqual(result.status_code, 200)
@@ -170,12 +171,12 @@ class CategorylistTestCase(unittest.TestCase):
         )
         self.assertEqual(rv.status_code, 201)
         rv = self.client.put(
-            '/category_manipulation/1',
+            '/category_edit/1',
             headers=dict(Authorization="Bearer " + access_token),
             data={'category_name': 'Soups'}
         )
         self.assertEqual(rv.status_code, 200)
-        results = self.client.get('/category_manipulation/1',
+        results = self.client.get('/category_byID/1',
                                   headers=dict(
                                       Authorization="Bearer " + access_token))
         self.assertIn('Soups', str(results.data))
@@ -186,7 +187,7 @@ class CategorylistTestCase(unittest.TestCase):
         result = self.login_user()
         access_token = json.loads(result.data.decode())['access_token']
         rv = self.client.put(
-            '/category_manipulation/4',
+            '/category_edit/4',
             headers=dict(Authorization="Bearer " + access_token),
             data={'category_name': 'Soups'}
         )
@@ -205,11 +206,11 @@ class CategorylistTestCase(unittest.TestCase):
             data={'category_name': 'Dinner'}
         )
         self.assertEqual(rv.status_code, 201)
-        res = self.client.delete('/category_manipulation/1',
+        res = self.client.delete('/category_delete/1',
                                  headers=dict(
                                      Authorization="Bearer " + access_token))
         self.assertEqual(res.status_code, 200)
-        result = self.client.get('/category_manipulation/1',
+        result = self.client.get('/category_byID/1',
                                  headers=dict(
                                      Authorization="Bearer " + access_token))
         self.assertEqual(result.status_code, 200)
@@ -220,7 +221,7 @@ class CategorylistTestCase(unittest.TestCase):
         result = self.login_user()
         access_token = json.loads(result.data.decode())['access_token']
 
-        result = self.client.get('/category_manipulation/3',
+        result = self.client.delete('/category_delete/3',
                                  headers=dict(
                                      Authorization="Bearer " + access_token))
         data = json.loads(result.data.decode())
