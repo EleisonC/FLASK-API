@@ -40,12 +40,12 @@ Endpoint | Functionality
 POST /auth/register | Registers a new user
 POST /auth/login | Login a user
 POST /category_creation/ | Creates a new category
-GET /category_view_all/ | Retrieves all created categories by that user
-GET /category_manipulation/category_id | Retrieves a single category using it's ID
-PUT /category_manipulation/category_id | Updates a category of a specified ID
-DELETE /category_manipulation/category_id| Deletes a category of a specified ID
+GET /category_view/ | Retrieves all created categories by that user
+GET /category_byID/category_id | Retrieves a single category using it's ID
+PUT /category_edit/category_id | Updates a category of a specified ID
+DELETE /category_delete/category_id| Deletes a category of a specified ID
 POST /create_recipe/category_id | Creates a new recipe in a category 
-GET /view_all_recipes/category_id/ | Retrieves all created recipes in a category
+GET /view_recipes/category_id/ | Retrieves all created recipes in a category
 GET /recipe_byid/category_id/recipe_id | Retrieves a single recipe using it's ID
-PUT /recipe_manipulation/category_id/recipe_id | Updates a recipe in a category
-DELETE /recipe_manipulation/category_id/recipe_id | Deletes a recipe in a category
+PUT /recipe_ediy/category_id/recipe_id | Updates a recipe in a category
+DELETE /recipe_delete/category_id/recipe_id | Deletes a recipe in a category
