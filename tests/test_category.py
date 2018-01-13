@@ -192,7 +192,7 @@ class CategorylistTestCase(unittest.TestCase):
             data={'category_name': 'Soups'}
         )
         data = json.loads(rv.data.decode())
-        self.assertTrue(data['message'] == 'Invalid request')
+        self.assertTrue(data['message'] == 'Category does not exist')
 
     def test_categorylist_deletion(self):
         """Test API can delete an exsisting category. (DELETE request)."""
