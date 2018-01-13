@@ -89,7 +89,7 @@ def create_category():
             }
             return jsonify(response), 401
 
-@CATEGORIES_API.route('/category_view_all/', methods=["GET"])
+@CATEGORIES_API.route('/category_view/', methods=["GET"])
 def fetch_category():
     """
     Get categories
@@ -152,34 +152,15 @@ def fetch_category():
 
         user_id = User.decode_token(access_token)
         if not isinstance(user_id, str):
-            page = int(request.data.get('page', 1))
-            per_page = int(request.data.get('per_page', 5))
-            q = str(request.data.get('q', '')).capitalize()
+            page = int(request.args.get('page', 1))
+            per_page = int(request.args.get('per_page', 5))
+            q = str(request.args.get('q', '')).capitalize()
             categories = Category.query.filter_by(
-                created_by=user_id).paginate(page=page, per_page=per_page)
+                created_by=user_id).paginate(page, per_page, False)
             result = []
-            if categories:
-                if q:
-                    for category in categories.items:
-                        if q in category.category_name:
-                            obj = {
-                                'category_id': category.category_id,
-                                'category_name': category.category_name,
-                                'date_created': category.date_created,
-                                'data_modified': category.date_modified,
-                                'created_by': user_id
-                            }
-                            response = jsonify(obj)
-                            response.status_code = 200
-                            return response
-                        else:
-                            responce = jsonify({
-                                'meassage': 'category not found'
-                            })
-                            responce.status_code = 404
-                            return responce
-                else:
-                    for category in categories.items:
+            if q:
+                for category in categories.items:
+                    if q in category.category_name:
                         obj = {
                             'category_id': category.category_id,
                             'category_name': category.category_name,
@@ -188,19 +169,28 @@ def fetch_category():
                             'created_by': user_id
                         }
                         result.append(obj)
-                        # return jsonify(result)
-                    if result:
-                        response = jsonify(result)
-                        response.status_code = 200
-                        return response
-                    else:
-                        response = jsonify({
-                            'message': 'no categories available'
-                        })
-                        response.status_code = 404
-                        return response
             else:
-                return jsonify({'message': 'Invalid request'})
+                for category in categories.items:
+                    obj = {
+                        'category_id': category.category_id,
+                        'category_name': category.category_name,
+                        'date_created': category.date_created,
+                        'data_modified': category.date_modified,
+                        'created_by': user_id
+                    }
+                    result.append(obj)
+                    # return jsonify(result)
+            if result:
+                response = jsonify(result)
+                response.status_code = 200
+                return response
+            else:
+                response = jsonify({
+                    'message': 'no categories available'
+                })
+                response.status_code = 404
+                return response
+            
         else:
             message = user_id
             response = {
@@ -208,7 +198,7 @@ def fetch_category():
             }
             return jsonify(response), 401
 
-@CATEGORIES_API.route('/category_manipulation/<int:category_id>', methods=["DELETE"])
+@CATEGORIES_API.route('/category_delete/<int:category_id>', methods=["DELETE"])
 def category_delete(category_id, **kwargs):
     """
     Deletes a category
@@ -247,7 +237,7 @@ def category_delete(category_id, **kwargs):
                         category.category_id)
                 }, 200
 
-@CATEGORIES_API.route('/category_manipulation/<int:category_id>', methods=["PUT"])
+@CATEGORIES_API.route('/category_edit/<int:category_id>', methods=["PUT"])
 def category_manipulation(category_id, **kwargs):
     """
     update a category
@@ -283,7 +273,7 @@ def category_manipulation(category_id, **kwargs):
             category = Category.query.filter_by(created_by=user_id,
                                                 category_id=category_id).first()
             if not category:
-                return jsonify({'message': 'Invalid request'})
+                return jsonify({'message': 'Category does not exist'})
             if request.method == 'PUT':
                 name = str(request.data.get('category_name', '')).strip()
                 if name:
@@ -307,7 +297,7 @@ def category_manipulation(category_id, **kwargs):
                 else:
                     return jsonify({'message': 'please put valid data'})
 
-@CATEGORIES_API.route('/category_manipulation/<int:category_id>', methods=["GET"])
+@CATEGORIES_API.route('/category_byID/<int:category_id>', methods=["GET"])
 def category_view(category_id, **kwargs):
     """
     Get a category by id

@@ -97,7 +97,7 @@ def create_recipe(category_id, **kwargs):
         }
         return jsonify(response), 401
 
-@RECIPES_API.route('/view_all_recipes/<int:category_id>/', methods=["GET"])
+@RECIPES_API.route('/view_recipes/<int:category_id>/', methods=["GET"])
 def view_all_recipes(category_id, **kwags):
     """
     View recipes of a specific category or query on specific recipe
@@ -157,13 +157,13 @@ def view_all_recipes(category_id, **kwags):
 
         user_id = User.decode_token(access_token)
         if not isinstance(user_id, str):
-            page = int(request.data.get('page', 1))
-            per_page = int(request.data.get('per_page', 5))
-            q = str(request.data.get('q', ''))
+            page = int(request.args.get('page', 1))
+            per_page = int(request.args.get('per_page', 5))
+            q = str(request.args.get('q', '')).capitalize()
             name = Category.query.filter_by(category_id=category_id, created_by=user_id).first()
             if name:
                 recipes = Recipe.query.filter_by(
-                    category=category_id).paginate(page=page, per_page=per_page)
+                    category=category_id).paginate(page, per_page, False)
                 result = []
                 if q:
                     for recipe in recipes.items:
@@ -177,9 +177,6 @@ def view_all_recipes(category_id, **kwags):
                                 "category": recipe.category
                             }
                             result.append(obj)
-                            response = jsonify(result)
-                            response.status_code = 200
-                            return response
                         else:
                             response = jsonify({
                                 'meassage': 'category not found'
@@ -197,16 +194,16 @@ def view_all_recipes(category_id, **kwags):
                             "category": recipe.category
                         }
                         result.append(obj)
-                    if result:
-                        response = jsonify(result)
-                        response.status_code = 200
-                        return response
-                    else:
-                        response = jsonify({
-                            'message': 'no recipes available'
-                        })
-                        response.status_code = 404
-                        return response
+                if result:
+                    response = jsonify(result)
+                    response.status_code = 200
+                    return response
+                else:
+                    response = jsonify({
+                        'message': 'no recipes available'
+                    })
+                    response.status_code = 404
+                    return response
             else:
                 return jsonify({'message': 'Invalid request'})
         else:
@@ -290,7 +287,7 @@ def recipe_byid(category_id, recipe_id, **kwargs):
             }
             return jsonify(response), 401
 
-@RECIPES_API.route('/recipe_manipulation/<int:category_id>/<int:recipe_id>', methods=["PUT"])
+@RECIPES_API.route('/recipe_edit/<int:category_id>/<int:recipe_id>', methods=["PUT"])
 def recipe_manipulation(category_id, recipe_id, **kwargs):
     """
     update a recipe
@@ -332,7 +329,7 @@ def recipe_manipulation(category_id, recipe_id, **kwargs):
             if name:
                 recipe = Recipe.query.filter_by(recipe_id=recipe_id).first()
                 if not recipe:
-                    abort(404)
+                    return jsonify({'message': 'this recipe does not exist'})
 
                 if request.method == "PUT":
                     name = str(request.data.get('recipe_name', '')).strip()
@@ -366,7 +363,7 @@ def recipe_manipulation(category_id, recipe_id, **kwargs):
                 'message': message
             }
             return jsonify(response), 401
-@RECIPES_API.route('/recipe_manipulation/<int:category_id>/<int:recipe_id>', methods=["DELETE"])
+@RECIPES_API.route('/recipe_delete/<int:category_id>/<int:recipe_id>', methods=["DELETE"])
 def recipe_delete(category_id, recipe_id):
     """
     Deletes a recipe

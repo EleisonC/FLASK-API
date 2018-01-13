@@ -60,16 +60,18 @@ class RegistrationView(MethodView):
         # if not user:
             # we will try to register them
         try:
-            user = User.query.filter_by(username=request.data['username']).first()
+            user = User.query.filter_by(email=request.data['email']).first()
             if not user:
                 post_data = request.data
                 # register the user
+                email = post_data['email'].strip()
                 username = post_data['username'].strip()
                 password = post_data['password'].strip()
                 if username and password:
                     if validator.validate_name(username) == "Valid Name" and\
-                            validator.validate_password(password) == "Valid password":
-                        user = User(username=username, password=password)
+                            validator.validate_password(password) == "Valid password" and\
+                            validator.validate_email(email) == "Valid email":
+                        user = User(username=username, password=password, email=email)
                         user.save()
 
                         response = {
@@ -162,7 +164,7 @@ class LoginView(MethodView):
             if user and user.password_is_valid(request.data['password']):
                 # generate the access token.
                 access_token = user.generate_token(user.id)
-
+                print('TOKEN YAFFE', access_token)
                 if access_token:
                     response = {
                         'message': 'You logged in successfully',
