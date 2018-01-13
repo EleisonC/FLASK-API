@@ -11,6 +11,9 @@ def validate_name(name):
     if re.match(r'(?=.*[A-Za-z\s])^[A-Za-z0-9\s]*$', name):
         return 'Valid Name'
 
+def validate_email(email):
+	    if re.match(r'(^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9-.]+$)', email):
+		    return "Valid email"
 
 def validate_password(password):
     """This method is used to validate the password
