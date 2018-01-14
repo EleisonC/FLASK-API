@@ -164,7 +164,6 @@ class LoginView(MethodView):
             if user and user.password_is_valid(request.data['password']):
                 # generate the access token.
                 access_token = user.generate_token(user.id)
-                print('TOKEN YAFFE', access_token)
                 if access_token:
                     response = {
                         'message': 'You logged in successfully',
