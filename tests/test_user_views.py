@@ -35,7 +35,7 @@ class UserTestCase(unittest.TestCase):
         result = json.loads(res.data.decode())
         # assert that the request contains a success
         self.assertEqual(result["message"],
-                         'Invalid username or password not strong enough. Please try again.')
+                         'please provide a strong valid password above six characters')
         self.assertEqual(res.status_code, 403)
 
     def test_registration(self):
