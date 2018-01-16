@@ -3,9 +3,15 @@ import os
 from app import create_app
 from instance.config import app_config
 from flasgger import Swagger
-from flask import render_template, redirect
+from flask import render_template, redirect, jsonify
 config_name = os.getenv('APP_SETTINGS')
 app = create_app(config_name)
+
+@app.errorhandler(404)
+def url_not_found(error):
+    return jsonify({
+        'message': "Requested URL is invalid"}), 404
+
 swag = Swagger(app,
                template={
                    "info": {
