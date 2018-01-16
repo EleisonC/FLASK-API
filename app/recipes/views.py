@@ -6,53 +6,6 @@ import validator
 
 @RECIPES_API.route('/create_recipe/<int:category_id>', methods=["POST"])
 def create_recipe(category_id, **kwargs):
-    """
-    Create recipes
-    ---
-    tags:
-        - recipe function
-    parameters:
-        - in: path
-        name: category_id
-        required: True
-        type: integer
-        description: the id of the category the recipe will belong to
-        - in: body
-        name: body
-        required: True
-        type: string
-        description: enter recipe name and intsructions
-    security:
-        - TokenHeader: []
-    responses:
-        200:
-            description:  recipe successfully created
-        201:
-            description: You successfully created a recipe
-            schema:
-            id: Register
-            properties:
-                name:
-                type: string
-                default: Lunch
-        400:
-            description: name must not contain special characters and should not contain numbers only
-            schema:
-            id: Register User
-            properties:
-                name:
-                type: string
-                default: Invalid json data
-        422:
-            description: If nothing is entered
-            schema:
-            id: Add category
-            properties:
-                name:
-                type: string
-                default: ""
-
-    """
     auth_header = request.headers.get('Authorization')
     if not auth_header:
         return jsonify({'message': 'Provide a token'})
@@ -99,55 +52,6 @@ def create_recipe(category_id, **kwargs):
 
 @RECIPES_API.route('/view_recipes/<int:category_id>/', methods=["GET"])
 def view_all_recipes(category_id, **kwags):
-    """
-    View recipes of a specific category or query on specific recipe
-    ---
-    tags:
-        - recipe function
-    parameters:
-        - in: path
-        name: category_id
-        required: True
-        type: integer
-        description: the id of the category the recipe will belong to
-        - in: query
-        name: query
-        required: True
-        type: string
-        description: enter recipe name
-        - in: query
-        name: page
-        required: True
-        type: integer
-        description: page to be diplayed
-        - in: query
-        name: per page
-        required: True
-        type: integer
-        description: number of items to be displayed per page
-    security:
-        - TokenHeader: []
-    responses:
-        200:
-            description:  category successfully created
-        201:
-            description: You successfully registered
-            schema:
-            id: Register
-            properties:
-                name:
-                type: string
-                default: Lunch
-        404:
-            description: recipe not found
-            schema:
-            id: Register User
-            properties:
-                name:
-                type: string
-                default: Invalid json data
-
-    """
     auth_header = request.headers.get('Authorization')
     if not auth_header:
         return jsonify({'message': 'Provide a token'})
@@ -215,45 +119,6 @@ def view_all_recipes(category_id, **kwags):
 
 @RECIPES_API.route('/recipe_byid/<int:category_id>/<int:recipe_id>', methods=["GET", "POST"])
 def recipe_byid(category_id, recipe_id, **kwargs):
-    """
-    View recipes of a specific category or query on specific recipe
-    ---
-    tags:
-        - recipe function
-    parameters:
-        - in: path
-        name: category_id
-        required: True
-        type: integer
-        description: the id of the category the recipe will belong to
-        - in: path
-        name: recipe_id
-        required: True
-        type: integer
-        description: enter recipe id that will be returned
-    security:
-        - TokenHeader: []
-    responses:
-        200:
-            description:  category successfully created
-        201:
-            description: You successfully registered
-            schema:
-            id: Register
-            properties:
-                name:
-                type: string
-                default: Lunch
-        404:
-            description: recipe not found
-            schema:
-            id: Register User
-            properties:
-                name:
-                type: string
-                default: Invalid json data
-
-    """
     auth_header = request.headers.get('Authorization')
     if not auth_header:
         return jsonify({'message': 'Provide a token'})
@@ -289,33 +154,6 @@ def recipe_byid(category_id, recipe_id, **kwargs):
 
 @RECIPES_API.route('/recipe_edit/<int:category_id>/<int:recipe_id>', methods=["PUT"])
 def recipe_manipulation(category_id, recipe_id, **kwargs):
-    """
-    update a recipe
-    ---
-    tags:
-        - recipe function
-    parameters:
-        - in: path
-        name: category_id
-        required: True
-        type: string
-        description: the category_id of category to update
-        - in: path
-        name: recipe_id
-        required: True
-        type: string
-        description: the recipe id of recipe to update
-        - in: body
-        name: body
-        required: True
-        type: string
-        description: this contains the update name and instructions for the recipe
-    security:
-        - TokenHeader: []
-    responses:
-        200:
-            description:  recipe successfully updated
-    """
     auth_header = request.headers.get('Authorization')
     if not auth_header:
         return jsonify({'message': 'Provide a token'})
@@ -365,28 +203,6 @@ def recipe_manipulation(category_id, recipe_id, **kwargs):
             return jsonify(response), 401
 @RECIPES_API.route('/recipe_delete/<int:category_id>/<int:recipe_id>', methods=["DELETE"])
 def recipe_delete(category_id, recipe_id):
-    """
-    Deletes a recipe
-    ---
-    tags:
-        - recipe function
-    parameters:
-        - in: path
-        name: category_id
-        required: True
-        type: integer
-        description: category of the recipe that will be deleted
-        - in: path
-        name: recipe_id
-        required: True
-        type: integer
-        description: recipe id for the recpie to be deleted
-    security:
-        - TokenHeader: []
-    responses:
-        200:
-            description:  category successfully deleted
-    """
     auth_header = request.headers.get('Authorization')
     if not auth_header:
         return jsonify({'message': 'Provide a token'})
