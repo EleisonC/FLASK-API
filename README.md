@@ -8,7 +8,7 @@ This is a Flask API of the Yummy-Recipes that handles:
 3. Creating, reading, updating and deleting of recipes
 
 #### To test the application and get it running, do the following:
-1. Create the virtual environment and activate it
+1. Create the virtual environment and activate
  ```
  $ mkvirtualenv my_project
  $ workon my_project
