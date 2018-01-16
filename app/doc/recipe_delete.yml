@@ -1,22 +1,21 @@
-"""
-    Deletes a recipe
-    ---
-    tags:
-        - recipe function
-    parameters:
-        - in: path
-        name: category_id
-        required: True
-        type: integer
-        description: category of the recipe that will be deleted
-        - in: path
-        name: recipe_id
-        required: True
-        type: integer
-        description: recipe id for the recpie to be deleted
-    security:
-        - TokenHeader: []
-    responses:
-        200:
-            description:  category successfully deleted
- """
+
+Deletes a recipe
+---
+tags:
+  - recipe function
+parameters:
+  - in: path
+    name: category_id
+    required: True
+    type: integer
+    description: category of the recipe that will be deleted
+  - in: path
+    name: recipe_id
+    required: True
+    type: integer
+    description: recipe id for the recpie to be deleted
+security:
+  - TokenHeader: []
+responses:
+    200:
+        description:  category successfully deleted

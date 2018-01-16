@@ -89,7 +89,6 @@ def fetch_category(user_id):
                 'created_by': user_id
             }
             result.append(obj)
-            # return jsonify(result)
     if result:
         response = jsonify(result)
         response.status_code = 200

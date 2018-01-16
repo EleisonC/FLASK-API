@@ -1,27 +1,26 @@
-"""
-    update a recipe
-    ---
-    tags:
-        - recipe function
-    parameters:
-        - in: path
-        name: category_id
-        required: True
-        type: string
-        description: the category_id of category to update
-        - in: path
-        name: recipe_id
-        required: True
-        type: string
-        description: the recipe id of recipe to update
-        - in: body
-        name: body
-        required: True
-        type: string
-        description: this contains the update name and instructions for the recipe
-    security:
-        - TokenHeader: []
-    responses:
-        200:
-            description:  recipe successfully updated
-"""
+
+update a recipe
+---
+tags:
+  - recipe function
+parameters:
+  - in: path
+    name: category_id
+    required: True
+    type: string
+    description: the category_id of category to update
+  - in: path
+    name: recipe_id
+    required: True
+    type: string
+    description: the recipe id of recipe to update
+  - in: body
+    name: body
+    required: True
+    type: string
+    description: this contains the update name and instructions for the recipe
+security:
+  - TokenHeader: []
+responses:
+    200:
+        description:  recipe successfully updated

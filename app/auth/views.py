@@ -10,9 +10,6 @@ class RegistrationView(MethodView):
     """This class registers a new user. """
     @swag_from('/app/doc/register_user.yml')
     def post(self):
-        # user = User.query.filter_by(username=request.data['username']).first()
-        # if not user:
-            # we will try to register them
         try:
             user = User.query.filter_by(email=request.data['email']).first()
             if not user:
@@ -37,11 +34,6 @@ class RegistrationView(MethodView):
                     }
                     # return a response notifying the user that they registered well
                     return make_response(jsonify(response)), 201
-                    # else:
-                    #     response = {
-                    #         'message': 'Please provide valid username, email and strong password.'
-                    #     }
-                    #     return make_response(jsonify(response)), 403
                 else:
                     return jsonify({'message': 'all fields required'})
 
@@ -59,15 +51,6 @@ class RegistrationView(MethodView):
                 'message': "Provide all the fields  in json form"
             }
             return make_response(jsonify(response)), 401
-        # else:
-        #     # there is an existing user. we dont want to register twice
-        #     # return a message to the user telling them that they already exist
-        #     response = {
-        #         'message': 'User already exists. Please choose another username'
-        #     }
-
-        #     return make_response(jsonify(response)), 202
-
 
 class LoginView(MethodView):
     """This class-based view handles user login and access token generation. """
@@ -126,8 +109,6 @@ class Logout(MethodView):
         else:
             return jsonify({'message': 'please provide a  valid token'})
 
-
-
 class ResetPassword(MethodView):
     """ this class is to allow a user to reset password"""
     @swag_from('/app/doc/change_user_password.yml')
@@ -136,7 +117,6 @@ class ResetPassword(MethodView):
         if not auth_header:
             return jsonify({'message': 'Provide a token'})
         access_token = auth_header.split(" ")[1]
-
         if access_token:
             user_id = User.decode_token(access_token)
             if isinstance(user_id, int):
@@ -145,11 +125,9 @@ class ResetPassword(MethodView):
                 password = put_data['password']
                 new = put_data['new_password'].strip()
                 confirm = put_data['confirm_password'].strip()
-
                 reset_data = [new, confirm]
                 user = User.query.filter_by(
                     username=username).first()
-
                 if user and user.password_is_valid(password):
                     if not all(reset_data):
                         responce = jsonify({
@@ -161,18 +139,11 @@ class ResetPassword(MethodView):
                                 new, confirm) == "Valid password":
                             user.password = Bcrypt().generate_password_hash(new).decode()
                             user.save()
-                            response = {
-                                'message': 'Password Succesfully Changed'}
+                            response = {'message': 'Password Succesfully Changed'}
                             return make_response(jsonify(response)), 200
-                        else:
-                            response = {
-                                'message': "Passwords don't match or not strong"
-                            }
-                            return make_response(jsonify(response))
-                else:
-                    return jsonify({'message': 'Wrong username or password'})
-                
-
+                        return make_response(jsonify({
+                            'message': "Passwords don't match or not strong"}))
+                return jsonify({'message': 'Wrong username or password'})
 
 # define the API resource
 registration_view = RegistrationView.as_view('register_view')

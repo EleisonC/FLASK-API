@@ -2,15 +2,15 @@
 Deletes a category
 ---
 tags:
-    - category function
+  - category function
 parameters:
-    - in: path
+  - in: path
     name: category_id
     required: True
     type: integer
     description: Delete a category using an id
 security:
-    - TokenHeader: []
+  - TokenHeader: []
 responses:
     200:
         description:  category successfully deleted

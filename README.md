@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/EleisonC/FLASK-API.svg?branch=develop)](https://travis-ci.org/EleisonC/FLASK-API)
 [![Coverage Status](https://coveralls.io/repos/github/EleisonC/FLASK-API/badge.svg?branch=develop)](https://coveralls.io/github/EleisonC/FLASK-API?branch=develop)
+[![Maintainability](https://api.codeclimate.com/v1/badges/9598704ef35fafd8d6eb/maintainability)](https://codeclimate.com/github/EleisonC/FLASK-API/maintainability)
 ## Yummy-Recipes-API
 This is a Flask API of the Yummy-Recipes that handles:
 1. User authentication
