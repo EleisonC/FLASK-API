@@ -36,7 +36,7 @@ class UserTestCase(unittest.TestCase):
         # assert that the request contains a success
         self.assertEqual(result["message"],
                          'please provide a strong valid password above six characters')
-        self.assertEqual(res.status_code, 403)
+        self.assertEqual(res.status_code, 200)
 
     def test_registration(self):
         """test user registration works"""

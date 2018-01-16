@@ -5,10 +5,10 @@ from flask import make_response, request, jsonify
 from app.models import User, BlacklistedToken
 from flask_bcrypt import Bcrypt
 from flasgger import swag_from
-
+from app.categories.views import authenticate
 class RegistrationView(MethodView):
     """This class registers a new user. """
-    @swag_from('/app/docs/register_user.yml')
+    @swag_from('/app/doc/register_user.yml')
     def post(self):
         # user = User.query.filter_by(username=request.data['username']).first()
         # if not user:
@@ -71,7 +71,7 @@ class RegistrationView(MethodView):
 
 class LoginView(MethodView):
     """This class-based view handles user login and access token generation. """
-    @swag_from('/app/docs/login_user.yml')
+    @swag_from('/app/doc/login_user.yml')
     def post(self):
         try:
             user = User.query.filter_by(
@@ -104,7 +104,7 @@ class LoginView(MethodView):
 
 class Logout(MethodView):
     """ This class logout a user"""
-    @swag_from('/app/docs/logout_user.yml')
+    @swag_from('/app/doc/logout_user.yml')
     def post(self):
         auth_header = request.headers.get("Authorization")
         if not auth_header:
@@ -130,7 +130,7 @@ class Logout(MethodView):
 
 class ResetPassword(MethodView):
     """ this class is to allow a user to reset password"""
-    @swag_from('/app/docs/change_user_password.yml')
+    @swag_from('/app/doc/change_user_password.yml')
     def put(self):
         auth_header = request.headers.get("Authorization")
         if not auth_header:

@@ -1,4 +1,4 @@
-"""
+
 Handle POST request for this view. Url --> /auth/login
 ---
 tags:
@@ -42,4 +42,3 @@ responses:
             default: Invalid username or password, please try again
   500:
     description: An error occured ensure proper login
-"""
