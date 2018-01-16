@@ -1,0 +1,17 @@
+"""
+    Deletes a category
+    ---
+    tags:
+        - category function
+    parameters:
+        - in: path
+        name: category_id
+        required: True
+        type: integer
+        description: Delete a category using an id
+    security:
+        - TokenHeader: []
+    responses:
+        200:
+            description:  category successfully deleted
+    """

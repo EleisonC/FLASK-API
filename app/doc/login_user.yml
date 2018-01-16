@@ -1,0 +1,45 @@
+"""
+Handle POST request for this view. Url --> /auth/login
+---
+tags:
+  - User functionality
+parameters:
+  - in: body
+    name: body
+    required: True
+    type: string
+    description: Login a registered user using existing username and password.
+responses:
+  200:
+    description: A user logged in successfully
+  201:
+    description: A user logged in successfully
+    schema:
+      id: successful Login
+      properties:
+        username:
+            type: string
+            default: Johnson
+        password:
+            type: string
+            default: joHn89
+        response:
+            type: string
+            default: access_token = "ejkffncdjnnsudhfbfndjkdi7766,skjaUg" You logged in successfully.
+  401:
+    description: Invalid credentials
+    schema:
+      id: unsuccessful login
+      properties:
+        username:
+            type: string
+            default: not_registered_username
+        password:
+            type: string
+            default: not_registred_password
+        response:
+            type: string
+            default: Invalid username or password, please try again
+  500:
+    description: An error occured ensure proper login
+"""

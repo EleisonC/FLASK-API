@@ -1,0 +1,42 @@
+"""
+    Create categories
+    ---
+    tags:
+        - category function
+    parameters:
+        - in: body
+        name: body
+        required: True
+        type: string
+        description: enter data in json format
+    security:
+        - TokenHeader: []
+    responses:
+        200:
+            description: category successfully created
+        201:
+            description: You successfully registered
+            schema:
+            id: Register
+            properties:
+                name:
+                type: string
+                default: Lunch
+        400:
+            description: name must not contain special characters and should not contain numbers only
+            schema:
+            id: Register User
+            properties:
+                name:
+                type: string
+                default: Invalid json data
+        422:
+            description: If nothing is entered
+            schema:
+            id: Add category
+            properties:
+                name:
+                type: string
+                default: ""
+
+    """

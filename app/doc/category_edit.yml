@@ -1,0 +1,22 @@
+"""
+    update a category
+    ---
+    tags:
+        - category function
+    parameters:
+        - in: path
+        name: category_id
+        required: True
+        type: string
+        description: the category_id of category to update
+        - in: body
+        name: new category name
+        required: True
+        type: integer
+        description: this is the new name the category will change to.
+    security:
+        - TokenHeader: []
+    responses:
+        200:
+            description:  category successfully created
+"""
