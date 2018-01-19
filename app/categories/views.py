@@ -7,6 +7,7 @@ from functools import wraps
 
 
 def authenticate(func):
+    #this function is used to check if a user is logged in and has a valid token
     @wraps(func)
     def auth(*args, **kwargs):
         
@@ -33,6 +34,7 @@ def authenticate(func):
 @swag_from('/app/doc/create_category.yml')
 @authenticate
 def create_category(user_id):
+    #this function is used to create a category under a specific user_id
     category_name = str(request.data.get(
         'category_name', '')).strip()
     if category_name:
@@ -62,6 +64,8 @@ def create_category(user_id):
 @swag_from('/app/doc/category_view.yml')
 @authenticate
 def fetch_category(user_id):
+    #this function retrieves categories of a specific user
+    #the data can be paginated and also can search a specific category
     page = int(request.args.get('page', 1))
     per_page = int(request.args.get('per_page', 5))
     q = str(request.args.get('q', '')).capitalize()
@@ -104,6 +108,7 @@ def fetch_category(user_id):
 @swag_from('/app/doc/category_delete.yml')
 @authenticate
 def category_delete(user_id, category_id, **kwargs):
+    #this function deletes a user's category
     category = Category.query.filter_by(created_by=user_id,
                                         category_id=category_id).first()
     if not category:
@@ -119,6 +124,7 @@ def category_delete(user_id, category_id, **kwargs):
 @swag_from('/app/doc/category_edit.yml')
 @authenticate
 def category_manipulation(user_id, category_id, **kwargs):
+    #this function is used to edit a category
     category = Category.query.filter_by(created_by=user_id,
                                         category_id=category_id).first()
     if category:
@@ -151,6 +157,7 @@ def category_manipulation(user_id, category_id, **kwargs):
 @swag_from('/app/doc/category_byID.yml')
 @authenticate
 def category_view(user_id, category_id, **kwargs):
+    #this function is used to view a category by ID  of a current user
     category = Category.query.filter_by(created_by=user_id,
                                         category_id=category_id).first()
     if not category:

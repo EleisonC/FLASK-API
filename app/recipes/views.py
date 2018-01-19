@@ -7,6 +7,7 @@ from app.categories.views import authenticate
 @RECIPES_API.route('/create_recipe/<int:category_id>', methods=["POST"])
 @authenticate
 def create_recipe(user_id, category_id, **kwargs):
+    #this function is used to created a recipe under an existing category ID
     recipe_name = str(request.data.get('recipe_name')).strip()
     instructions = str(request.data.get('instructions')).strip()
     if recipe_name and instructions:
@@ -36,6 +37,8 @@ def create_recipe(user_id, category_id, **kwargs):
 @RECIPES_API.route('/view_recipes/<int:category_id>/', methods=["GET"])
 @authenticate
 def view_all_recipes(user_id, category_id, **kwags):
+    #this function is used to view all recipes under a category
+    #the data can be paginated and also can search a specific category
     page, per_page = int(request.args.get('page', 1)), int(request.args.get('per_page', 5))
     q = str(request.args.get('q', '')).capitalize()
     name = Category.query.filter_by(category_id=category_id, created_by=user_id).first()
@@ -81,6 +84,7 @@ def view_all_recipes(user_id, category_id, **kwags):
 @RECIPES_API.route('/recipe_byid/<int:category_id>/<int:recipe_id>', methods=["GET", "POST"])
 @authenticate
 def recipe_byid(user_id, category_id, recipe_id, **kwargs):
+    #this function is used to view a recipe by ID under a category
     name = Category.query.filter_by(category_id=category_id, created_by=user_id).first()
     if name:
         recipe = Recipe.query.filter_by(recipe_id=recipe_id).first()
@@ -102,6 +106,7 @@ def recipe_byid(user_id, category_id, recipe_id, **kwargs):
 @RECIPES_API.route('/recipe_edit/<int:category_id>/<int:recipe_id>', methods=["PUT"])
 @authenticate
 def recipe_manipulation(user_id, category_id, recipe_id, **kwargs):
+    #this function is used to edit a recipe under a category
     name = Category.query.filter_by(category_id=category_id, created_by=user_id).first()
     if name:
         recipe = Recipe.query.filter_by(recipe_id=recipe_id).first()
@@ -133,13 +138,13 @@ def recipe_manipulation(user_id, category_id, recipe_id, **kwargs):
 @RECIPES_API.route('/recipe_delete/<int:category_id>/<int:recipe_id>', methods=["DELETE"])
 @authenticate
 def recipe_delete(user_id, category_id, recipe_id):
+    # this function is used to delete a recipe
     name = Category.query.filter_by(category_id=category_id, created_by=user_id).first()
     if name:
         recipe = Recipe.query.filter_by(recipe_id=recipe_id).first()
         if not recipe:
             abort(404)
         else:
-            # if the method is a DELETE request
             recipe.delete()
             return {"message": "recipe {} deleted successfully".format(
                 recipe.recipe_id)}, 200
