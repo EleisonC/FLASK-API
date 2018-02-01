@@ -1,0 +1,10 @@
+
+This method logout a user
+---
+tags:
+  - User functionality
+security:
+  - TokenHeader: []
+responses:
+  200:
+    description: you logged out successfully

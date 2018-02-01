@@ -1,0 +1,38 @@
+
+View recipes of a specific category or query on specific recipe
+---
+tags:
+  - recipe function
+parameters:
+  - in: path
+    name: category_id
+    required: True
+    type: integer
+    description: the id of the category the recipe will belong to
+  - in: path
+    name: recipe_id
+    required: True
+    type: integer
+    description: enter recipe id that will be returned
+security:
+  - TokenHeader: []
+responses:
+    200:
+        description:  category successfully created
+    201:
+        description: You successfully registered
+        schema:
+        id: Register
+        properties:
+            name:
+                type: string
+                default: Lunch
+    404:
+        description: recipe not found
+        schema:
+        id: Register User
+        properties:
+            name:
+                type: string
+                default: Invalid json data
+
