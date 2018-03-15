@@ -227,7 +227,7 @@ class RecipeTestCase(unittest.TestCase):
             data={"recipe_name": "beans"})
         result = json.loads(res_2.data.decode())
         self.assertEqual(result['message'],
-                         'The name already exists. Try another')
+                         'The Recipe Already Exists. Try another')
 
     def test_data_validity(self):
         self.register_user()

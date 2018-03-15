@@ -39,7 +39,7 @@ class User(db.Model):
         try:
             # set up a payload with an expiration time
             payload = {
-                'exp': datetime.utcnow() + timedelta(minutes=100),
+                'exp': datetime.utcnow() + timedelta(minutes=1000),
                 'iat': datetime.utcnow(),
                 'sub': user_id
             }
@@ -81,9 +81,7 @@ class Category(db.Model):
     category_id = db.Column(db.Integer, primary_key=True)
     category_name = db.Column(db.String(255))
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
-    date_modified = db.Column(
-        db.DateTime, default=db.func.current_timestamp(),
-        onupdate=db.func.current_timestamp())
+    date_modified = db.Column(db.DateTime, default=db.func.current_timestamp())
     created_by = db.Column(db.Integer, db.ForeignKey(User.id))
     recipe = db.relationship(
         'Recipe', order_by='Recipe.recipe_id', cascade='all, delete-orphan'

@@ -10,6 +10,7 @@ class RegistrationView(MethodView):
     """This class registers a new user. """
     @swag_from('/app/doc/register_user.yml')
     def post(self):
+        
         try:
             user = User.query.filter_by(email=request.data['email']).first()
             if not user:
@@ -21,11 +22,11 @@ class RegistrationView(MethodView):
                 if username and password and email:
                     
                     if validator.validate_name(username) != "Valid Name":
-                        return jsonify({'message': 'please provide a valid username'})
+                        return jsonify({'message': 'please provide a valid username'}), 400
                     if validator.validate_password(password) != "Valid password":
-                         return jsonify({'message': 'please provide a strong valid password above six characters'})
+                         return jsonify({'message': 'please provide a strong valid password above six characters'}), 400
                     if validator.validate_email(email) != "Valid email":
-                        return jsonify({'message': 'please provide a valid email'})
+                        return jsonify({'message': 'please provide a valid email'}), 400
                     user = User(username=username, password=password, email=email)
                     user.save()
 
@@ -35,7 +36,7 @@ class RegistrationView(MethodView):
                     # return a response notifying the user that they registered well
                     return make_response(jsonify(response)), 201
                 else:
-                    return jsonify({'message': 'all fields required'})
+                    return jsonify({'message': 'all fields required'}), 400
 
             else:
                 # there is an existing user. we dont want to register twice
@@ -44,12 +45,14 @@ class RegistrationView(MethodView):
                     'message': 'User already exists. Please choose another username'
                 }
 
-                return make_response(jsonify(response)), 202
+                return make_response(jsonify(response)), 400
         except Exception as e:
             # An error occured, therefore return a string message containg the error
+            
             response = {
-                'message': "Provide all the fields  in json form"
+                'message': "Provide all the fields."
             }
+            
             return make_response(jsonify(response)), 401
 
 class LoginView(MethodView):
@@ -59,7 +62,6 @@ class LoginView(MethodView):
         try:
             user = User.query.filter_by(
                 username=request.data['username']).first()
-
             if user and user.password_is_valid(request.data['password']):
                 # generate the access token.
                 access_token = user.generate_token(user.id)
