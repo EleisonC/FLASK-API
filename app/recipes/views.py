@@ -58,7 +58,8 @@ def view_all_recipes(user_id, category_id, **kwags):
 
         result = []
         if q:
-            for recipe in recipes.items:
+            recipes = Recipe.query.filter_by(category=category_id)
+            for recipe in recipes:
                 if q in recipe.recipe_name:
                     obj = {
                         "recipe_id": recipe.recipe_id,
@@ -69,20 +70,17 @@ def view_all_recipes(user_id, category_id, **kwags):
                         "category": recipe.category
                     }
                     result.append(obj)
-                else:
-                    response = jsonify({'meassage': 'recipie not found'})
-                    response.status_code = 401
-                    return response
-        for recipe in recipes.items:
-            obj = {
-                "recipe_id": recipe.recipe_id,
-                "recipe_name": recipe.recipe_name,
-                "instructions": recipe.instructions,
-                "date_created": recipe.date_created,
-                "date_modified": recipe.date_modified,
-                "category": recipe.category
-            }
-            result.append(obj)
+        else:
+            for recipe in recipes.items:
+                obj = {
+                    "recipe_id": recipe.recipe_id,
+                    "recipe_name": recipe.recipe_name,
+                    "instructions": recipe.instructions,
+                    "date_created": recipe.date_created,
+                    "date_modified": recipe.date_modified,
+                    "category": recipe.category
+                }
+                result.append(obj)
         if result:
             response = {
                 "next_page": next_url,
