@@ -36,7 +36,7 @@ class UserTestCase(unittest.TestCase):
         # assert that the request contains a success
         self.assertEqual(result["message"],
                          'please provide a strong valid password above six characters')
-        self.assertEqual(res.status_code, 200)
+        
 
     def test_registration(self):
         """test user registration works"""
@@ -53,7 +53,7 @@ class UserTestCase(unittest.TestCase):
         res = self.client.post('/auth/register', data=self.user_data)
         # self.assertEqual(res.status_code, 201)
         second_res = self.client.post('/auth/register', data=self.user_data)
-        self.assertEqual(second_res.status_code, 202)
+        self.assertEqual(second_res.status_code, 400)
         # get the results returned in json format
         result = json.loads(second_res.data.decode())
         self.assertEqual(

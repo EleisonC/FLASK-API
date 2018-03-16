@@ -18,4 +18,4 @@ security:
   - TokenHeader: []
 responses:
     200:
-        description:  category successfully deleted
+      description:  category successfully deleted
