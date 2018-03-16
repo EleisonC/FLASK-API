@@ -5,7 +5,11 @@ class Config(object):
     DEBUG = False
     CSRF_ENABLED = True
     SECRET_KEY = "chris1234kal"
-    SQLALCHEMY_DATABASE_URI = 'postgresql://christopherkalule:chrisenlarry@localhost:5432/yummys_db'
+    # SQLALCHEMY_DATABASE_URI = 'postgresql://christopherkalule:chrisenlarry@localhost:5432/yummys_db'
+    if os.environ.get('DATABASE_URL') is None:
+        SQLALCHEMY_DATABASE_URI = 'postgresql://christopherkalule:chrisenlarry@localhost:5432/yummys_db'
+    else:
+        SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 
 class DevelopmentConfig(Config):
     """Configurations for Testing, with a separate test database"""
