@@ -171,5 +171,5 @@ def recipe_delete(user_id, category_id, recipe_id):
         else:
             recipe.delete()
             return {"message": "recipe {} deleted successfully".format(
-                recipe.recipe_id)}, 200
+                recipe.recipe_name)}, 200
     return jsonify({'message': 'Invalid request'})
