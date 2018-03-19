@@ -39,7 +39,7 @@ class User(db.Model):
         try:
             # set up a payload with an expiration time
             payload = {
-                'exp': datetime.utcnow() + timedelta(minutes=1000),
+                'exp': datetime.utcnow() + timedelta(hours=1000),
                 'iat': datetime.utcnow(),
                 'sub': user_id
             }
