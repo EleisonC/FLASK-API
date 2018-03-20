@@ -99,7 +99,7 @@ def view_all_recipes(user_id, category_id, **kwags):
                 'message': 'no recipes available'})
             response.status_code = 200
             return response
-    return jsonify({'message': 'Invalid request'}), 404
+    return jsonify({'message': 'Invalid Request'}), 404
 
 @RECIPES_API.route('/recipe_byid/<int:category_id>/<int:recipe_id>', methods=["GET", "POST"])
 @swag_from('/app/doc/recipe_byID.yml')
@@ -170,6 +170,6 @@ def recipe_delete(user_id, category_id, recipe_id):
             abort(404)
         else:
             recipe.delete()
-            return {"message": "recipe {} deleted successfully".format(
+            return {"message": "Recipe {} deleted successfully".format(
                 recipe.recipe_name)}, 200
     return jsonify({'message': 'Invalid request'})

@@ -14,7 +14,7 @@ def authenticate(func):
         
         auth_header = request.headers.get('Authorization')
         if not auth_header:
-            return jsonify({'message': 'Provide a token'})
+            return jsonify({'message': 'Please LogIn'})
         access_token = auth_header.split(" ")[1]
 
         if access_token:
@@ -28,7 +28,7 @@ def authenticate(func):
                 'message': message
             }
             return jsonify(response), 401
-        return jsonify({'message': 'please login.'})
+        return jsonify({'message': 'Please login.'})
     return auth
         
 @CATEGORIES_API.route('/category_creation/', methods=["POST"])
